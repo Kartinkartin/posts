@@ -1,27 +1,33 @@
 import styles from "./post.module.css";
-import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { IPostProps, TStore } from "../../services/types/index";
 import chatImage from "../../images/chat_bubble_outline.svg";
 import pencilIcon from "../../images/mode_edit_24px.svg";
 import trashIcon from "../../images/delete_24px.svg";
-import starIcon from "../../images/star_border.svg";
+import starEmptyIcon from "../../images/star_border.svg";
+import starIcon from "../../images/star.svg";
 import checkBox from "../../images/check_box_outline_blank.svg";
-import { deletePost } from "../../services/reducers/posts";
+import { deletePost, addToFav } from "../../services/reducers/posts";
+import { deletePostReq } from "../api/api";
+import useModal from "../../hooks/use-modal";
+import Modal from "../../ui/modal/modal";
+import PopupDelete from "../popup-delete/popup-delete";
 
 
-interface IPostProps {
-  title: string;
-  author: string;
-  text: string;
-  id: number;
-}
-export default function Post({ title, author, text, id }: IPostProps) {
+export default function Post({ title, author, text, id, inFavourite=false }: IPostProps) {
   const dispatch = useDispatch();
+  const { isModalOpen, openModal, closeModal } = useModal();
   const checkHandler = () => {};
   const chatHandler = () => {};
+  const addToFavHandler = (id: number) => {
+    dispatch(addToFav(id));    
+  };
   const modeHandler = () => {};
   const deleteHandler = (id: number) => {
-    debugger;
-    dispatch(deletePost())
+    deletePostReq(id)
+      .then(() => dispatch(deletePost(id)))
+    
   };
   return (
     <div className={styles.container}>
@@ -51,14 +57,20 @@ export default function Post({ title, author, text, id }: IPostProps) {
           type="button"
           className={styles.button}
           style={{ backgroundImage: `url(${trashIcon})` }}
-          onClick={() => deleteHandler(id)}
+          onClick={openModal}
         />
         <button
           type="button"
-          className={styles.button}
-          style={{ backgroundImage: `url(${starIcon})` }}
+          className={`${styles.button}`}
+          style={inFavourite ? { backgroundImage: `url(${starIcon})` } : { backgroundImage: `url(${starEmptyIcon})` }}
+          onClick={() => addToFavHandler(id)}
         />
       </div>
+      {isModalOpen && (
+        <Modal onClose={closeModal}>
+          <PopupDelete closeModal={closeModal} deleteHandler={() => deleteHandler(id)} />
+        </Modal>
+      )}
     </div>
   );
 }

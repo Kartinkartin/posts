@@ -6,13 +6,11 @@ import styles from './modal.module.css';
 type TModalProps = {
   children?: JSX.Element;
   onClose: () => void;
-  needCloseBtn?: boolean;
 };
 
 export default function Modal({
   children,
   onClose,
-  needCloseBtn = true,
 }: TModalProps) {
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -31,7 +29,7 @@ export default function Modal({
       <div className={styles.container}>
           <button 
             className={styles.button_close}
-            onClick={() => {}}
+            onClick={onClose}
           />
         {children}
       </div>

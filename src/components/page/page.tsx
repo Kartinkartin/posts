@@ -1,25 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getPosts, getUsers } from "../api/api";
-import { IPost, IUser } from "../services/types/data";
 import styles from "./page.module.css";
 import Post from "../post/post";
-import { addPost } from "../../services/reducers/posts";
-import { TStore } from "../services/types";
-import { addUser } from "../../services/reducers/users";
+import { addPosts } from "../../services/reducers/posts";
+import { TStore } from "../../services/types";
+import { addUsers } from "../../services/reducers/users";
 
 export default function Page() {
   const dispatch = useDispatch();
   const users = useSelector((state: TStore) => state.users);
-  const posts = useSelector((state: TStore) => state.posts.posts);
+  const { posts, favourites } = useSelector((state: TStore) => state.posts);
 
   useEffect(() => {
     getUsers().then((users) => {
-        users.forEach((user: IUser) => dispatch(addUser(user)));
+        dispatch(addUsers(users));
 
     });
     getPosts().then((posts) => {
-        posts.forEach((post: IPost) => dispatch(addPost(post)));
+        dispatch(addPosts(posts));
     });
   }, []);
   return (
@@ -33,9 +32,10 @@ export default function Page() {
             author={users.find((user) => user.id === userId)!.name}
             id={id}
             key={id}
+            inFavourite={favourites?.includes(id)}
           />
         ))}
-        {/* case of error */}
+        {/* case of error or loading */}
       <div>text</div> 
     </div>
   );
