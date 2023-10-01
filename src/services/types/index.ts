@@ -1,18 +1,10 @@
-import { IPost, IUser } from "../../services/types/data";
+import { IComment, IPost, IUser } from "../../services/types/data";
 
 export type TStore = {
     posts: {
         posts: Array<IPost>,
-        favourites: [number];
+        favourites: [number],
     },
     users: Array<IUser>,
-
-}
-
-export interface IPostProps {
-    title: string;
-    author: string;
-    text: string;
-    id: number;
-    inFavourite: boolean;
+    comments: any,
 }

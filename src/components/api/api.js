@@ -31,3 +31,9 @@ export async function deletePostReq(id) {
     method: 'DELETE',
   });
 }
+
+export async function getCommentsPost(id) {
+  return await request(`${config.baseUrl}/comments?postId=${id}`, {
+    method: 'GET',
+  });
+}

@@ -5,10 +5,10 @@
     0px 1px 2px 0px rgba(0, 0, 0, 0.3);
   background-color: #f7f2fa;
   box-sizing: border-box;
-  padding-right: 5px;
-  padding-left: 5px;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .title {
@@ -29,6 +29,7 @@
   line-height: 16px; /* 133.333% */
   letter-spacing: 0.5px;
   margin: 0;
+  text-align: right;
 }
 
 .text {
@@ -39,6 +40,7 @@
   line-height: 20px; /* 142.857% */
   letter-spacing: 0.25px;
   margin: 0;
+  text-align: justify;
 }
 
 .handles {
@@ -56,3 +58,6 @@
   cursor: pointer;
 }
 
+.comments {
+  padding-top: 10px;
+}
