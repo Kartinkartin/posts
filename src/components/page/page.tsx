@@ -23,8 +23,8 @@ export default function Page() {
   }, []);
   return (
     <div className={styles.container}>
-      {users !== null &&
-        posts !== null &&
+      {users.length !== null &&
+        posts.length !== null &&
         posts.map(({ title, body, userId, id }) => (
           <Post
             title={title}

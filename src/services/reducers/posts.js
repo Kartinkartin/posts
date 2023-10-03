@@ -16,7 +16,12 @@ const postsToolkitSlice = createSlice({
             const index = state.posts.indexOf(post);
             state.posts.splice(index, 1);
         },
-        mode(state) {},
+        changePost(state, action) {
+            const { id, userId, title, body } = action.payload;
+            const post = state.posts.find(post => post.id === id);
+            const index = state.posts.indexOf(post);
+            state.posts[index] = { id, userId, title, body };
+        },
         addToFav(state, action) {
             const id = action.payload;
             const favourites = state.favourites;
@@ -32,4 +37,4 @@ const postsToolkitSlice = createSlice({
 })
 
 export default postsToolkitSlice.reducer;
-export const { addPosts, deletePost, mode, addToFav } = postsToolkitSlice.actions;
+export const { addPosts, deletePost, changePost, addToFav } = postsToolkitSlice.actions;

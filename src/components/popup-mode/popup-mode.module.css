@@ -1,0 +1,36 @@
+.form {
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 7px;
+}
+
+.input {
+    font-family: 'Roboto';
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px; /* 142.857% */
+    letter-spacing: 0.25px;
+}
+
+.variants {
+    position: relative;
+}
+
+.variant {
+    margin: 0;
+    font-family: 'Roboto';
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px; /* 142.857% */
+    letter-spacing: 0.25px;
+}
+
+.handlers {
+    width: 100%;
+    padding-top: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    column-gap: 50px;
+}

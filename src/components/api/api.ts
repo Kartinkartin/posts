@@ -1,15 +1,26 @@
+import { IPost } from "../../services/types/data";
+
+type TOptions = { 
+  headers?: { 'Content-type': string; }; 
+  method?: string; 
+  body?: string; 
+}
+
 const config = {
   baseUrl: "https://jsonplaceholder.typicode.com",
+  headers: {
+    'Content-type': 'application/json; charset=UTF-8',
+  }
 };
 
-function checkRes(res) {
+function checkRes(res: any) {
   if (res.ok) {
     return res.json();
   }
   return Promise.reject([`Ошибка ${res.status}`, res.json()]);
 }
 
-function request(url, options) {
+function request(url: string, options: TOptions) {
   return fetch(url, options)
     .then(checkRes)
 }
@@ -26,14 +37,22 @@ export async function getPosts() {
   });
 }
 
-export async function deletePostReq(id) {
+export async function deletePostReq(id: number) {
   return await request(`${config.baseUrl}/posts/${id}`, {
     method: 'DELETE',
   });
 }
 
-export async function getCommentsPost(id) {
+export async function getCommentsPost(id: number) {
   return await request(`${config.baseUrl}/comments?postId=${id}`, {
     method: 'GET',
+  });
+}
+
+export async function modePost(data: IPost) {
+  return await request(`${config.baseUrl}/posts/${data.id}`, {
+    method: 'PUT',
+    body: JSON.stringify({...data}),
+    headers: config.headers,
   });
 }

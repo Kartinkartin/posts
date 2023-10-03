@@ -1,14 +1,25 @@
 import styles from "./button.module.css";
 
 interface IButtonProps {
-    text: string, 
-    onClick: () => void
+  text: string;
+  type?: "button" | "submit";
+  onClick?: () => void;
+  size?: "small" | "large";
 }
 
-export default function Button({text, onClick}: IButtonProps) {
-    return(
-        <button className={styles.container} onClick={onClick}>
-            {text}
-        </button>
-    )
+export default function Button({
+  text,
+  type = "button",
+  onClick,
+  size = "small",
+}: IButtonProps) {
+  return (
+    <button 
+        type={type} 
+        className={styles.container} 
+        onClick={onClick}
+        style={size === "small" ? { width: '45xp' } : { width: '75xp' }}>
+      {text}
+    </button>
+  );
 }

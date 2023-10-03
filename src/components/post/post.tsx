@@ -17,6 +17,7 @@ import styles from "./post.module.css";
 import { TStore } from "../../services/types";
 import { IComment } from "../../services/types/data";
 import Comment from "../comment/comment";
+import PopupMode from "../popup-mode/popup-mode";
 
 interface IPostProps {
   title: string;
@@ -117,7 +118,7 @@ export default function Post({
       )}
       {isMode && (
         <Modal onClose={closeModeModal}>
-          <div />
+          <PopupMode id={id} onClose={closeModeModal} />
         </Modal>
       )}
     </div>
