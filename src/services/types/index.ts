@@ -4,6 +4,7 @@ export type TStore = {
     posts: {
         posts: Array<IPost>,
         favourites: [number],
+        chosen: [number] | number,
     },
     users: Array<IUser>,
     comments: any,

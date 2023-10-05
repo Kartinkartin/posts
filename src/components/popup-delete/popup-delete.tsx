@@ -6,7 +6,7 @@ import styles from "./popup-delete.module.css";
 
 interface IPopupProps {
   closeModal: () => void;
-  id: number;
+  id: number | Array<number>;
 }
 
 export default function PopupDelete({
@@ -15,8 +15,15 @@ export default function PopupDelete({
 }: IPopupProps) {
   const dispatch = useDispatch();
 
-  const deleteHandler = (id: number) => {
-    deletePostReq(id).then(() => dispatch(deletePost(id)));
+  const deleteHandler = (id: number | Array<number>) => {
+    if (typeof id === 'number') {
+      deletePostReq(id).then(() => dispatch(deletePost(id)));
+    } else {
+      id.forEach(id => (
+        deletePostReq(id).then(() => dispatch(deletePost(id)))
+      ))
+    }
+    closeModal();
   };
   return (
     <>

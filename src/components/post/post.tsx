@@ -8,7 +8,8 @@ import trashIcon from "../../images/delete_24px.svg";
 import starEmptyIcon from "../../images/star_border.svg";
 import starIcon from "../../images/star.svg";
 import checkBox from "../../images/check_box_outline_blank.svg";
-import { addToFav } from "../../services/reducers/posts";
+import fullCheckBox from "../../images/check_box.svg";
+import { addToFav, choseManyPosts } from "../../services/reducers/posts";
 import { getCommentsPost } from "../api/api";
 import Modal from "../../ui/modal/modal";
 import PopupDelete from "../popup-delete/popup-delete";
@@ -24,16 +25,9 @@ interface IPostProps {
   author: string;
   text: string;
   id: number;
-  inFavourite: boolean;
 }
 
-export default function Post({
-  title,
-  author,
-  text,
-  id,
-  inFavourite = false,
-}: IPostProps) {
+export default function Post({ title, author, text, id }: IPostProps) {
   const dispatch = useDispatch();
   const { isModalOpen, openModal, closeModal } = useModal();
   const {
@@ -43,10 +37,11 @@ export default function Post({
   } = useModal();
   const [showComments, setShowComments] = useState(false);
   const comments = useSelector((store: TStore) => store.comments);
+  const { favourites, chosen } = useSelector((store: TStore) => store.posts);
 
-  const checkHandler = () => {};
-  const modeHandler = () => {};
-
+  const checkHandler = (id: number) => {
+    dispatch(choseManyPosts(id));
+  };
   const chatHandler = async (id: number) => {
     if (!Object.hasOwn(comments, id) || comments[id].length === 0) {
       await getCommentsPost(id).then((comments) =>
@@ -67,8 +62,12 @@ export default function Post({
         <button
           type="button"
           className={styles.button}
-          style={{ backgroundImage: `url(${checkBox})` }}
-          onClick={checkHandler}
+          style={
+            Array.isArray(chosen) && chosen.includes(id)
+              ? { backgroundImage: `url(${fullCheckBox})` }
+              : { backgroundImage: `url(${checkBox})` }
+          }
+          onClick={() => checkHandler(id)}
         />
         <button
           type="button"
@@ -96,7 +95,7 @@ export default function Post({
           type="button"
           className={`${styles.button}`}
           style={
-            inFavourite
+            favourites.includes(id)
               ? { backgroundImage: `url(${starIcon})` }
               : { backgroundImage: `url(${starEmptyIcon})` }
           }
@@ -107,7 +106,7 @@ export default function Post({
         <div className={styles.comments}>
           {comments[id].map((comment: IComment) => {
             const { name, email, body, id } = comment;
-            return <Comment name={name} email={email} body={body} key={id}/>;
+            return <Comment name={name} email={email} body={body} key={id} />;
           })}
         </div>
       )}
