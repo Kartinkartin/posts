@@ -1,0 +1,22 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="24" height="24" fill="#DFD5EC"/>
+<g id="Elements">
+<g clip-path="url(#clip0_49823_12141)">
+<path d="M-257 -640C-257 -673.137 -230.137 -700 -197 -700H1571C1604.14 -700 1631 -673.137 1631 -640V1283C1631 1291.84 1623.84 1299 1615 1299H-241C-249.837 1299 -257 1291.84 -257 1283V-640Z" fill="white"/>
+<g id="Components">
+<g id="Icons">
+<rect x="-195.5" y="-245.5" width="361" height="838" rx="15.5" fill="#FEF7FF"/>
+<g id="Icons/arrow_drop_down_24px">
+<path id="icon" d="M7 10L12 15L17 10H7Z" fill="black"/>
+</g>
+<rect x="-195.5" y="-245.5" width="361" height="838" rx="15.5" stroke="#CAC4D0"/>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_49823_12141">
+<path d="M-257 -640C-257 -673.137 -230.137 -700 -197 -700H1571C1604.14 -700 1631 -673.137 1631 -640V1283C1631 1291.84 1623.84 1299 1615 1299H-241C-249.837 1299 -257 1291.84 -257 1283V-640Z" fill="white"/>
+</clipPath>
+</defs>
+</svg>

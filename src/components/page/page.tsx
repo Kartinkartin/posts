@@ -23,7 +23,8 @@ export default function Page() {
   );
   // фильтры
   const [filterStar, setFilterStar] = useState(false);
-  const { values, handleChange } = useForm({});
+  const { values, handleChange } = useForm({title: ''});
+  const [filterTitle, setFilterTitle] = useState(false);
   //для подтверждения удаления и добавления/изъятия избранного
   const { isModalOpen, openModal, closeModal } = useModal();
   const {
@@ -31,8 +32,11 @@ export default function Page() {
     openModal: addFavor,
     closeModal: closeFavor,
   } = useModal();
+
   const onSubmit = (e: any) => {
     e.preventDefault();
+    const { title } = values;
+    title ? setFilterTitle(true) : setFilterTitle(false);
   }
 
   const allPostsRender = () => {
@@ -49,10 +53,13 @@ export default function Page() {
       ))
     )
   }
-
   const filterPostRender = () => {
     const postsFiltered = posts.filter(post => {
-      return favourites.includes(post.id)
+      return (
+        filterStar ? favourites.includes(post.id) : 1
+      ) && (
+        filterTitle ? post.title.includes(values.title) : 1
+      )
     })
     return postsFiltered.map(({ title, body, userId, id }) => (
       <Post
@@ -65,7 +72,6 @@ export default function Page() {
       />
     ))
   }
-
   useEffect(() => {
     getUsers().then((users) => {
       dispatch(addUsers(users));
@@ -88,22 +94,27 @@ export default function Page() {
             }
             onClick={() => setFilterStar(!filterStar)}
           />
-          <form onSubmit={onSubmit}>
+          <form className={styles.filterTitle} onSubmit={onSubmit}>
             <input 
               type='text'
               placeholder="Поиск по заголовку"
               onChange={handleChange}
               value={values.title}
+              name='title'
             />
           </form>
+          <div className={styles.filterName}>
+          <p className={styles.filter__text}>все</p>
+
+          </div>
         </div>
       </header>
       <main className={styles.container}>
         {users.length !== null &&
           posts.length !== null && (
-          filterStar ?
-          filterPostRender() :
-          allPostsRender()
+          // filterStar ?
+          filterPostRender() 
+          //: allPostsRender()
         )}
         {/* case of error or loading */}
         {Array.isArray(chosen) && Boolean(chosen.length) && (
