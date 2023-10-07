@@ -61,7 +61,7 @@ export default function Page() {
               onClick={openModal}
             />
             <Button
-              text="В избранное"
+              text="Избранное"
               type="button"
               size="large"
               onClick={addFavor}

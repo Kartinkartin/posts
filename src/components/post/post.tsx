@@ -12,7 +12,6 @@ import fullCheckBox from "../../images/check_box.svg";
 import { addToFav, choseManyPosts, chosePost } from "../../services/reducers/posts";
 import { getCommentsPost } from "../api/api";
 import Modal from "../../ui/modal/modal";
-import PopupDelete from "../popup-delete/popup-delete";
 import { getComments } from "../../services/reducers/comments";
 import styles from "./post.module.css";
 import { TStore } from "../../services/types";
@@ -90,7 +89,6 @@ export default function Post({ title, author, text, id, onDelete }: IPostProps) 
           type="button"
           className={styles.button}
           style={{ backgroundImage: `url(${trashIcon})` }}
-          // onClick={openModal}
           onClick={() => deleteHandler(id)}
         />
         <button

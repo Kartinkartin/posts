@@ -15,7 +15,9 @@ const postsToolkitSlice = createSlice({
       const id = action.payload;
       const post = state.posts.find((post) => post.id === id);
       const index = state.posts.indexOf(post);
+      const indexFav = state.favourites.indexOf(id);
       state.posts.splice(index, 1);
+      state.favourites.splice(indexFav, 1);
       state.chosen = [];
     },
     changePost(state, action) {
@@ -34,6 +36,7 @@ const postsToolkitSlice = createSlice({
         state.favourites.push(action.payload);
         state.favourites.sort();
       }
+      state.chosen = [];
     },
     choseManyPosts(state, action) {
       const id = action.payload;
