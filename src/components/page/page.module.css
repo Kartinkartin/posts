@@ -38,3 +38,20 @@
     height: 40px;
     align-items: center;
 }
+
+.filters {
+    display: flex;
+    column-gap: 10px;
+}
+
+.filterStar {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background-position: center;
+    background-size: cover;
+}
+
+.filterTitle {
+    font-family: 'Roboto';
+}

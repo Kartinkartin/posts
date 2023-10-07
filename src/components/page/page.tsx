@@ -1,16 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import useModal from "../../hooks/use-modal";
 import { getPosts, getUsers } from "../api/api";
-import styles from "./page.module.css";
-import Post from "../post/post";
 import { addPosts } from "../../services/reducers/posts";
-import { TStore } from "../../services/types";
 import { addUsers } from "../../services/reducers/users";
+import { TStore } from "../../services/types";
+import Post from "../post/post";
 import Button from "../../ui/buttons/button";
 import Modal from "../../ui/modal/modal";
 import PopupDelete from "../popup-delete/popup-delete";
-import useModal from "../../hooks/use-modal";
 import PopupAddFafourite from "../popup-add-favourite/popup-add-favourite";
+import starEmptyIcon from "../../images/star_border.svg";
+import starFullIcon from "../../images/star.svg";
+import styles from "./page.module.css";
+import { useForm } from "../../hooks/use-form";
 
 export default function Page() {
   const dispatch = useDispatch();
@@ -18,12 +21,50 @@ export default function Page() {
   const { posts, chosen, favourites } = useSelector(
     (state: TStore) => state.posts
   );
+  // фильтры
+  const [filterStar, setFilterStar] = useState(false);
+  const { values, handleChange } = useForm({});
+  //для подтверждения удаления и добавления/изъятия избранного
   const { isModalOpen, openModal, closeModal } = useModal();
   const {
     isModalOpen: isAddingFavourite,
     openModal: addFavor,
     closeModal: closeFavor,
   } = useModal();
+  const onSubmit = (e: any) => {
+    e.preventDefault();
+  }
+
+  const allPostsRender = () => {
+    return(
+      posts.map(({ title, body, userId, id }) => (
+        <Post
+          title={title}
+          text={body}
+          author={users.find((user) => user.id === userId)!.name}
+          id={id}
+          key={`post${id}`}
+          onDelete={openModal}
+        />
+      ))
+    )
+  }
+
+  const filterPostRender = () => {
+    const postsFiltered = posts.filter(post => {
+      return favourites.includes(post.id)
+    })
+    return postsFiltered.map(({ title, body, userId, id }) => (
+      <Post
+        title={title}
+        text={body}
+        author={users.find((user) => user.id === userId)!.name}
+        id={id}
+        key={`post${id}`}
+        onDelete={openModal}
+      />
+    ))
+  }
 
   useEffect(() => {
     getUsers().then((users) => {
@@ -37,22 +78,35 @@ export default function Page() {
     <>
       <header className={styles.header}>
         <h1 className={styles.title}>POSTS</h1>
+        <div className={styles.filters} >
+          <button
+            className={styles.filterStar}
+            style={
+              filterStar
+                ? { backgroundImage: `url(${starFullIcon})` }
+                : { backgroundImage: `url(${starEmptyIcon})` }
+            }
+            onClick={() => setFilterStar(!filterStar)}
+          />
+          <form onSubmit={onSubmit}>
+            <input 
+              type='text'
+              placeholder="Поиск по заголовку"
+              onChange={handleChange}
+              value={values.title}
+            />
+          </form>
+        </div>
       </header>
       <main className={styles.container}>
         {users.length !== null &&
-          posts.length !== null &&
-          posts.map(({ title, body, userId, id }) => (
-            <Post
-              title={title}
-              text={body}
-              author={users.find((user) => user.id === userId)!.name}
-              id={id}
-              key={id}
-              onDelete={openModal}
-            />
-          ))}
+          posts.length !== null && (
+          filterStar ?
+          filterPostRender() :
+          allPostsRender()
+        )}
         {/* case of error or loading */}
-        {Array.isArray(chosen) && chosen.length && (
+        {Array.isArray(chosen) && Boolean(chosen.length) && (
           <div className={styles.handlers}>
             <Button
               text="Удалить"
