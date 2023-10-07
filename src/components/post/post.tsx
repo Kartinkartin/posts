@@ -9,7 +9,7 @@ import starEmptyIcon from "../../images/star_border.svg";
 import starIcon from "../../images/star.svg";
 import checkBox from "../../images/check_box_outline_blank.svg";
 import fullCheckBox from "../../images/check_box.svg";
-import { addToFav, choseManyPosts } from "../../services/reducers/posts";
+import { addToFav, choseManyPosts, chosePost } from "../../services/reducers/posts";
 import { getCommentsPost } from "../api/api";
 import Modal from "../../ui/modal/modal";
 import PopupDelete from "../popup-delete/popup-delete";
@@ -25,16 +25,12 @@ interface IPostProps {
   author: string;
   text: string;
   id: number;
+  onDelete: () => void;
 }
 
-export default function Post({ title, author, text, id }: IPostProps) {
+export default function Post({ title, author, text, id, onDelete }: IPostProps) {
   const dispatch = useDispatch();
   const { isModalOpen, openModal, closeModal } = useModal();
-  const {
-    isModalOpen: isMode,
-    openModal: openModeModal,
-    closeModal: closeModeModal,
-  } = useModal();
   const [showComments, setShowComments] = useState(false);
   const comments = useSelector((store: TStore) => store.comments);
   const { favourites, chosen } = useSelector((store: TStore) => store.posts);
@@ -53,6 +49,11 @@ export default function Post({ title, author, text, id }: IPostProps) {
   const addToFavHandler = (id: number) => {
     dispatch(addToFav(id));
   };
+  const deleteHandler = (id: number) => {
+    dispatch(chosePost(id));
+    onDelete();
+  };
+
   return (
     <div className={styles.container}>
       <h3 className={styles.title}>{title}</h3>
@@ -83,13 +84,14 @@ export default function Post({ title, author, text, id }: IPostProps) {
           type="button"
           className={styles.button}
           style={{ backgroundImage: `url(${pencilIcon})` }}
-          onClick={openModeModal}
+          onClick={openModal}
         />
         <button
           type="button"
           className={styles.button}
           style={{ backgroundImage: `url(${trashIcon})` }}
-          onClick={openModal}
+          // onClick={openModal}
+          onClick={() => deleteHandler(id)}
         />
         <button
           type="button"
@@ -112,12 +114,7 @@ export default function Post({ title, author, text, id }: IPostProps) {
       )}
       {isModalOpen && (
         <Modal onClose={closeModal}>
-          <PopupDelete closeModal={closeModal} id={id} />
-        </Modal>
-      )}
-      {isMode && (
-        <Modal onClose={closeModeModal}>
-          <PopupMode id={id} onClose={closeModeModal} />
+          <PopupMode id={id} onClose={closeModal} />
         </Modal>
       )}
     </div>

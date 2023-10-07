@@ -48,6 +48,7 @@ export default function Page() {
               author={users.find((user) => user.id === userId)!.name}
               id={id}
               key={id}
+              onDelete={openModal}
             />
           ))}
         {/* case of error or loading */}

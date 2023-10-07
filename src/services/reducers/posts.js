@@ -46,6 +46,10 @@ const postsToolkitSlice = createSlice({
         state.chosen.sort();
       }
     },
+    chosePost(state, action) {
+        const id = action.payload;
+        state.chosen = id;
+    }
   },
 });
 
@@ -56,4 +60,5 @@ export const {
   changePost,
   addToFav,
   choseManyPosts,
+  chosePost,
 } = postsToolkitSlice.actions;
