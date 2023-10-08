@@ -15,6 +15,7 @@ import starEmptyIcon from "../../images/star_border.svg";
 import starFullIcon from "../../images/star.svg";
 import arrowIcon from "../../images/arrow_drop_24px.svg";
 import styles from "./page.module.css";
+import { IPost, IUser } from "../../services/types/data";
 
 export default function Page() {
   const dispatch = useDispatch();
@@ -69,10 +70,18 @@ export default function Page() {
       setSortOption(null);
     } else {
       setSortOption(option);
-      console.log(option)
     }
     setValues({...values, sort: option})
   };
+  function compareString(arr: any, key: string) {
+    return arr.sort((a: any, b: any) => {
+      if(a[key] > b[key]) {
+        return 1;
+       } else if(a[key] < b[key]) {
+        return -1 
+      } else return 0;
+    })
+  }
   const postsRender = () => {
     const postsFiltered = posts.filter((post) => {
       return (
@@ -82,18 +91,23 @@ export default function Page() {
       );
     });
     
-    const postSorted = sortOption === 'ID' ? 
-      [...postsFiltered].sort((a, b) => (b.id - a.id)) : 
-      sortOption === 'названию' ?
-      [...postsFiltered].sort((a, b) => {
-        if(a.title > b.title) {
-          return 1;
-         } else if(a.title < b.title) {
-          return -1 
-        } else return 0;
-      }) :
-      postsFiltered;
-      
+    let postSorted: Array<IPost> = [];
+
+    if(sortOption === 'ID') {
+      postSorted = [...postsFiltered].sort((a, b) => (b.id - a.id))
+    } else if (sortOption === 'названию') {
+      postSorted = compareString(postsFiltered, 'title');
+    } else if (sortOption === 'имени автора') {
+      const usersSort = compareString([...users], "name");
+      usersSort.forEach((user: IUser) => {
+        postSorted = [...postSorted].concat(
+          [...postsFiltered].filter(post => post.userId === user.id)
+        );
+      })
+    } else {
+      postSorted = postsFiltered;
+    }
+
     return postSorted.map(({ title, body, userId, id }) => (
       <Post
         title={title}
