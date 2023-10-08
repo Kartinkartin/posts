@@ -12,6 +12,7 @@ import PopupDelete from "../popup-delete/popup-delete";
 import PopupAddFafourite from "../popup-add-favourite/popup-add-favourite";
 import starEmptyIcon from "../../images/star_border.svg";
 import starFullIcon from "../../images/star.svg";
+import arrowIcon from "../../images/arrow_drop_24px.svg";
 import styles from "./page.module.css";
 import { useForm } from "../../hooks/use-form";
 
@@ -23,8 +24,10 @@ export default function Page() {
   );
   // фильтры
   const [filterStar, setFilterStar] = useState(false);
-  const { values, handleChange } = useForm({title: ''});
+  const { values, handleChange, setValues } = useForm({title: '', author: 'Все', userId: ''});
   const [filterTitle, setFilterTitle] = useState(false);
+  const [openFilterName, setOpenFilterName] = useState(false);
+  const [filterName, setFilterName] = useState<number | null>(null);
   //для подтверждения удаления и добавления/изъятия избранного
   const { isModalOpen, openModal, closeModal } = useModal();
   const {
@@ -38,27 +41,21 @@ export default function Page() {
     const { title } = values;
     title ? setFilterTitle(true) : setFilterTitle(false);
   }
-
-  const allPostsRender = () => {
-    return(
-      posts.map(({ title, body, userId, id }) => (
-        <Post
-          title={title}
-          text={body}
-          author={users.find((user) => user.id === userId)!.name}
-          id={id}
-          key={`post${id}`}
-          onDelete={openModal}
-        />
-      ))
-    )
+  const onFilterName = (e: any) => {
+    setOpenFilterName(false);
+    const name = e.target.textContent;
+    const user = users.filter(user => user.name === name)[0];
+    setValues({... values, author: name, userId: user.id.toString()})
   }
+
   const filterPostRender = () => {
     const postsFiltered = posts.filter(post => {
       return (
         filterStar ? favourites.includes(post.id) : 1
       ) && (
         filterTitle ? post.title.includes(values.title) : 1
+      ) && (
+        filterName ? post.userId === filterName : 1
       )
     })
     return postsFiltered.map(({ title, body, userId, id }) => (
@@ -104,8 +101,26 @@ export default function Page() {
             />
           </form>
           <div className={styles.filterName}>
-          <p className={styles.filter__text}>все</p>
-
+            <p className={styles.filterName__text}>{values.author}</p>
+            <div
+            className={styles.filterName__icon}
+            style={{backgroundImage: `url(${arrowIcon})`}}
+            onClick={() => {setOpenFilterName(!openFilterName)}}
+            />
+            {openFilterName && (
+              <div className={styles.filterName__list}>
+                {users.map(({name, id}) => (
+                  <button
+                    type="button"
+                    className={styles.filterName__listText}
+                    onClick={onFilterName}
+                    key={id}
+                  >
+                    {name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </header>
