@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useModal from "../../hooks/use-modal";
+import { useForm } from "../../hooks/use-form";
 import { getPosts, getUsers } from "../api/api";
 import { addPosts } from "../../services/reducers/posts";
 import { addUsers } from "../../services/reducers/users";
@@ -14,7 +15,6 @@ import starEmptyIcon from "../../images/star_border.svg";
 import starFullIcon from "../../images/star.svg";
 import arrowIcon from "../../images/arrow_drop_24px.svg";
 import styles from "./page.module.css";
-import { useForm } from "../../hooks/use-form";
 
 export default function Page() {
   const dispatch = useDispatch();
@@ -24,11 +24,20 @@ export default function Page() {
   );
   // фильтры
   const [filterStar, setFilterStar] = useState(false);
-  const { values, handleChange, setValues } = useForm({title: '', author: 'Все', userId: ''});
+  const { values, handleChange, setValues } = useForm({
+    title: "",
+    author: "Все",
+    userId: "",
+    sort: "--"
+  });
   const [filterTitle, setFilterTitle] = useState(false);
   const [openFilterName, setOpenFilterName] = useState(false);
-  const [filterName, setFilterName] = useState<number | null>(null);
-  //для подтверждения удаления и добавления/изъятия избранного
+  const [filterName, setFilterName] = useState(false);
+  // сортировка
+  const [openSort, setOpenSort] = useState(false);
+  const [sortOption, setSortOption] = useState< string | null >(null);
+  const [sortSide, setSortSide] = useState< string | null >(null);
+  //для модалок подтверждения удаления и добавления/изъятия избранного
   const { isModalOpen, openModal, closeModal } = useModal();
   const {
     isModalOpen: isAddingFavourite,
@@ -40,25 +49,52 @@ export default function Page() {
     e.preventDefault();
     const { title } = values;
     title ? setFilterTitle(true) : setFilterTitle(false);
-  }
+  };
   const onFilterName = (e: any) => {
     setOpenFilterName(false);
     const name = e.target.textContent;
-    const user = users.filter(user => user.name === name)[0];
-    setValues({... values, author: name, userId: user.id.toString()})
-  }
-
-  const filterPostRender = () => {
-    const postsFiltered = posts.filter(post => {
+    if (name !== "Все") {
+      const user = users.filter((user) => user.name === name)[0];
+      setValues({ ...values, author: name, userId: user.id.toString() });
+      setFilterName(true);
+    } else {
+      setValues({ ...values, author: "Все", userId: "" });
+      setFilterName(false);
+    }
+  };
+  const onSort = (e: any) => {
+    setOpenSort(false);
+    const option = e.target.textContent;
+    if (option === '--') {
+      setSortOption(null);
+    } else {
+      setSortOption(option);
+      console.log(option)
+    }
+    setValues({...values, sort: option})
+  };
+  const postsRender = () => {
+    const postsFiltered = posts.filter((post) => {
       return (
-        filterStar ? favourites.includes(post.id) : 1
-      ) && (
-        filterTitle ? post.title.includes(values.title) : 1
-      ) && (
-        filterName ? post.userId === filterName : 1
-      )
-    })
-    return postsFiltered.map(({ title, body, userId, id }) => (
+        (filterStar ? favourites.includes(post.id) : 1) &&
+        (filterTitle ? post.title.includes(values.title) : 1) &&
+        (filterName ? post.userId === +values.userId : 1)
+      );
+    });
+    
+    const postSorted = sortOption === 'ID' ? 
+      [...postsFiltered].sort((a, b) => (b.id - a.id)) : 
+      sortOption === 'названию' ?
+      [...postsFiltered].sort((a, b) => {
+        if(a.title > b.title) {
+          return 1;
+         } else if(a.title < b.title) {
+          return -1 
+        } else return 0;
+      }) :
+      postsFiltered;
+      
+    return postSorted.map(({ title, body, userId, id }) => (
       <Post
         title={title}
         text={body}
@@ -67,8 +103,8 @@ export default function Page() {
         key={`post${id}`}
         onDelete={openModal}
       />
-    ))
-  }
+    ));
+  };
   useEffect(() => {
     getUsers().then((users) => {
       dispatch(addUsers(users));
@@ -76,14 +112,15 @@ export default function Page() {
     getPosts().then((posts) => {
       dispatch(addPosts(posts));
     });
+    return () => {};
   }, []);
   return (
     <>
       <header className={styles.header}>
         <h1 className={styles.title}>POSTS</h1>
-        <div className={styles.filters} >
+        <div className={styles.filters}>
           <button
-            className={styles.filterStar}
+            className={styles.filter_star}
             style={
               filterStar
                 ? { backgroundImage: `url(${starFullIcon})` }
@@ -91,46 +128,109 @@ export default function Page() {
             }
             onClick={() => setFilterStar(!filterStar)}
           />
-          <form className={styles.filterTitle} onSubmit={onSubmit}>
-            <input 
-              type='text'
-              placeholder="Поиск по заголовку"
-              onChange={handleChange}
-              value={values.title}
-              name='title'
-            />
-          </form>
-          <div className={styles.filterName}>
-            <p className={styles.filterName__text}>{values.author}</p>
-            <div
-            className={styles.filterName__icon}
-            style={{backgroundImage: `url(${arrowIcon})`}}
-            onClick={() => {setOpenFilterName(!openFilterName)}}
-            />
-            {openFilterName && (
-              <div className={styles.filterName__list}>
-                {users.map(({name, id}) => (
+          <div className={styles.filters_container}>
+            <form className={styles.filter_title} onSubmit={onSubmit}>
+              <input
+                className={styles.filter_title}
+                type="text"
+                placeholder="Поиск по заголовку"
+                onChange={handleChange}
+                value={values.title}
+                name="title"
+              />
+            </form>
+            <div className={styles.filter_name}>
+              <p className={styles.filter_name__text}>{values.author}</p>
+              <div
+                className={styles.filter_arrow}
+                style={{ backgroundImage: `url(${arrowIcon})` }}
+                onClick={() => {
+                  setOpenFilterName(!openFilterName);
+                }}
+              />
+              {openFilterName && (
+                <div className={styles.filter_name__list}>
                   <button
                     type="button"
-                    className={styles.filterName__listText}
+                    className={styles.filter_name__listText}
                     onClick={onFilterName}
-                    key={id}
+                    key={"all"}
                   >
-                    {name}
+                    Все
                   </button>
-                ))}
-              </div>
-            )}
+                  {users.map(({ name, id }) => (
+                    <button
+                      type="button"
+                      className={styles.filter_name__listText}
+                      onClick={onFilterName}
+                      key={id}
+                    >
+                      {name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className={styles.sorting}>
+          <p className={styles.sort_options__text}>Сортировать по: </p>
+          <div className={styles.sorting__container}>
+            <div className={styles.sort_options}>
+              <div
+                className={styles.filter_arrow}
+                style={{ backgroundImage: `url(${arrowIcon})` }}
+                onClick={() => {
+                  setOpenSort(!openSort);
+                }}
+              />
+              <p className={styles.sort_options__text}>{values.sort}</p>
+              
+              {openSort && (
+                <div className={styles.filter_name__list}>
+                  <button
+                    type="button"
+                    className={styles.filter_name__listText}
+                    onClick={onSort}
+                  >
+                    --
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.filter_name__listText}
+                    onClick={onSort}
+                  >
+                    ID
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.filter_name__listText}
+                    onClick={onSort}
+                  >
+                    названию
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.filter_name__listText}
+                    onClick={onSort}
+                  >
+                    имени автора
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.filter_name__listText}
+                    onClick={onSort}
+                  >
+                    наличию в избранном
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
       <main className={styles.container}>
-        {users.length !== null &&
-          posts.length !== null && (
-          // filterStar ?
-          filterPostRender() 
-          //: allPostsRender()
-        )}
+        {users.length !== null && posts.length !== null && postsRender()}
         {/* case of error or loading */}
         {Array.isArray(chosen) && Boolean(chosen.length) && (
           <div className={styles.handlers}>
