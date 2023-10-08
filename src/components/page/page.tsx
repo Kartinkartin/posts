@@ -104,6 +104,13 @@ export default function Page() {
           [...postsFiltered].filter(post => post.userId === user.id)
         );
       })
+    } else if (sortOption === 'наличию в избранном') {
+        postSorted = [...postSorted].concat(
+          postsFiltered.filter(post=> favourites.includes(post.id)), 
+          postsFiltered.filter(post => !favourites.includes(post.id))
+        )
+    
+
     } else {
       postSorted = postsFiltered;
     }
