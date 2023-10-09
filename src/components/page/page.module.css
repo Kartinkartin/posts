@@ -8,6 +8,7 @@
   display: flex;
   column-gap: 10px;
   align-items: center;
+  padding: 5px 0;
 }
 
 .filter_star {
@@ -104,6 +105,7 @@
   font-weight: 400;
   display: flex;
   flex-direction: column;
+  padding: 5px 0;
 }
 
 .sorting__container {
@@ -119,13 +121,32 @@
   justify-content: center;
 }
 
-.sort_options__text {
+.sorting__text {
   margin: 0;
   font-family: 'Roboto';
   font-size: 12px;
   font-weight: 400;
   text-align: left;
   width: 130px;
+}
+
+.sort_buttons {
+  display: flex;
+  flex-direction: row;
+  column-gap: 10px;
+}
+
+.sort_buttons__button {
+  border: none;
+  width: 24px;
+  height: 24px;
+  background-image: url('../../images/arrow_drop_24px.svg');
+  background-position: center;
+  background-size: cover;
+}
+
+.sort_buttons__button_flip {
+  background-image: url('../../images/arrow_drop_up_24px.svg');
 }
 
 .title {
@@ -136,7 +157,6 @@
   line-height: 36px;
   margin: 0;
   text-align: center;
-  padding-bottom: 10px;
 }
 
 .container {

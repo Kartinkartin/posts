@@ -5,7 +5,6 @@ import { useForm } from "../../hooks/use-form";
 import { getPosts, getUsers } from "../api/api";
 import { addPosts } from "../../services/reducers/posts";
 import { addUsers } from "../../services/reducers/users";
-import { TStore } from "../../services/types";
 import Post from "../post/post";
 import Button from "../../ui/buttons/button";
 import Modal from "../../ui/modal/modal";
@@ -14,8 +13,9 @@ import PopupAddFafourite from "../popup-add-favourite/popup-add-favourite";
 import starEmptyIcon from "../../images/star_border.svg";
 import starFullIcon from "../../images/star.svg";
 import arrowIcon from "../../images/arrow_drop_24px.svg";
-import styles from "./page.module.css";
+import { TStore } from "../../services/types";
 import { IPost, IUser } from "../../services/types/data";
+import styles from "./page.module.css";
 
 export default function Page() {
   const dispatch = useDispatch();
@@ -23,21 +23,24 @@ export default function Page() {
   const { posts, chosen, favourites } = useSelector(
     (state: TStore) => state.posts
   );
-  // фильтры
-  const [filterStar, setFilterStar] = useState(false);
+  // контроль параметров фильтров и сотрировки
   const { values, handleChange, setValues } = useForm({
     title: "",
     author: "Все",
     userId: "",
-    sort: "--"
+    sort: "--",
   });
+  // фильтры
+  const [filterStar, setFilterStar] = useState(false);
   const [filterTitle, setFilterTitle] = useState(false);
   const [openFilterName, setOpenFilterName] = useState(false);
   const [filterName, setFilterName] = useState(false);
   // сортировка
   const [openSort, setOpenSort] = useState(false);
-  const [sortOption, setSortOption] = useState< string | null >(null);
-  const [sortSide, setSortSide] = useState< string | null >(null);
+  const [sortOption, setSortOption] = useState<string | null>(null);
+  const [sortSide, setSortSide] = useState<"upToDown" | "downToUp" | null>(
+    null
+  );
   //для модалок подтверждения удаления и добавления/изъятия избранного
   const { isModalOpen, openModal, closeModal } = useModal();
   const {
@@ -66,21 +69,24 @@ export default function Page() {
   const onSort = (e: any) => {
     setOpenSort(false);
     const option = e.target.textContent;
-    if (option === '--') {
+    if (option === "--") {
       setSortOption(null);
+      setSortSide(null);
     } else {
       setSortOption(option);
+      setSortSide("downToUp");
     }
-    setValues({...values, sort: option})
+    setValues({ ...values, sort: option });
   };
-  function compareString(arr: any, key: string) {
+  function compareString(arr: any, key: string, condition: 'upToDown' | 'downToUp') {
+    
     return arr.sort((a: any, b: any) => {
-      if(a[key] > b[key]) {
-        return 1;
-       } else if(a[key] < b[key]) {
-        return -1 
+      if (a[key] > b[key]) {
+        return condition === 'upToDown' ? -1 : 1; 
+      } else if (a[key] < b[key]) {
+        return condition === 'upToDown' ? 1 : -1;
       } else return 0;
-    })
+    });
   }
   const postsRender = () => {
     const postsFiltered = posts.filter((post) => {
@@ -90,27 +96,30 @@ export default function Page() {
         (filterName ? post.userId === +values.userId : 1)
       );
     });
-    
+
     let postSorted: Array<IPost> = [];
 
-    if(sortOption === 'ID') {
-      postSorted = [...postsFiltered].sort((a, b) => (b.id - a.id))
-    } else if (sortOption === 'названию') {
-      postSorted = compareString(postsFiltered, 'title');
-    } else if (sortOption === 'имени автора') {
-      const usersSort = compareString([...users], "name");
+    if (sortOption === "ID") {
+      postSorted = [...postsFiltered].sort((a, b) =>
+        sortSide === "upToDown" ? b.id - a.id : a.id - b.id
+      );
+    } else if (sortOption === "названию") {
+      postSorted = compareString(postsFiltered, "title", sortSide!);
+    } else if (sortOption === "имени автора") {
+      const usersSort = compareString([...users], "name", sortSide!);
       usersSort.forEach((user: IUser) => {
         postSorted = [...postSorted].concat(
-          [...postsFiltered].filter(post => post.userId === user.id)
+          [...postsFiltered].filter((post) => post.userId === user.id)
         );
-      })
-    } else if (sortOption === 'наличию в избранном') {
-        postSorted = [...postSorted].concat(
-          postsFiltered.filter(post=> favourites.includes(post.id)), 
-          postsFiltered.filter(post => !favourites.includes(post.id))
-        )
-    
-
+      });
+    } else if (sortOption === "наличию в избранном") {
+      sortSide === 'downToUp' ? postSorted = [...postSorted].concat(
+        postsFiltered.filter((post) => favourites.includes(post.id)),
+        postsFiltered.filter((post) => !favourites.includes(post.id))
+      ) : postSorted = [...postSorted].concat(
+        postsFiltered.filter((post) => !favourites.includes(post.id)),
+        postsFiltered.filter((post) => favourites.includes(post.id))
+      );
     } else {
       postSorted = postsFiltered;
     }
@@ -147,6 +156,7 @@ export default function Page() {
                 ? { backgroundImage: `url(${starFullIcon})` }
                 : { backgroundImage: `url(${starEmptyIcon})` }
             }
+            type="button"
             onClick={() => setFilterStar(!filterStar)}
           />
           <div className={styles.filters_container}>
@@ -195,7 +205,7 @@ export default function Page() {
           </div>
         </div>
         <div className={styles.sorting}>
-          <p className={styles.sort_options__text}>Сортировать по: </p>
+          <p className={styles.sorting__text}>Сортировать по: </p>
           <div className={styles.sorting__container}>
             <div className={styles.sort_options}>
               <div
@@ -205,8 +215,8 @@ export default function Page() {
                   setOpenSort(!openSort);
                 }}
               />
-              <p className={styles.sort_options__text}>{values.sort}</p>
-              
+              <p className={styles.sorting__text}>{values.sort}</p>
+
               {openSort && (
                 <div className={styles.filter_name__list}>
                   <button
@@ -247,6 +257,20 @@ export default function Page() {
                 </div>
               )}
             </div>
+            {sortSide && (
+              <div className={styles.sort_buttons}>
+                <button
+                  className={styles.sort_buttons__button}
+                  type="button"
+                  onClick={() => setSortSide("upToDown")}
+                />
+                <button
+                  className={`${styles.sort_buttons__button} ${styles.sort_buttons__button_flip}`}
+                  type="button"
+                  onClick={() => setSortSide("downToUp")}
+                />
+              </div>
+            )}
           </div>
         </div>
       </header>
