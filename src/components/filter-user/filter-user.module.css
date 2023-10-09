@@ -1,0 +1,64 @@
+.filter_name {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  column-gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter_name__text {
+  margin: 0;
+  font-family: "Roboto";
+  font-size: 12px;
+  font-weight: 400;
+  text-align: right;
+}
+
+.filter_arrow {
+  margin-top: 2px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  transition: transform 0.2s linear;
+}
+
+.filter_name__list {
+  position: absolute;
+  z-index: 2;
+  top: 24px;
+  right: 0px;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0px 12px 24px 0px #15123321;
+  animation: show_filter_list 5s ease;
+}
+
+@keyframes show_filter_list {
+  from {
+    height: 0;
+  }
+  to {
+    height: 110px;
+  }
+}
+
+.filter_name__listText {
+  margin: 0;
+  padding: 0;
+  width: 145px;
+  font-family: "Roboto";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+  text-align: left;
+}
+
+.filter_name__listText:hover {
+  background-color: #f8f9fb;
+  cursor: pointer;
+}

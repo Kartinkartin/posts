@@ -1,22 +1,5 @@
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="24" height="24" fill="#DFD5EC"/>
-<g id="Elements">
-<g clip-path="url(#clip0_49823_12141)">
-<path d="M-202 -640C-202 -673.137 -175.137 -700 -142 -700H1626C1659.14 -700 1686 -673.137 1686 -640V1283C1686 1291.84 1678.84 1299 1670 1299H-186C-194.837 1299 -202 1291.84 -202 1283V-640Z" fill="white"/>
-<g id="Components">
-<g id="Icons">
-<rect x="-140.5" y="-245.5" width="361" height="838" rx="15.5" fill="#FEF7FF"/>
 <g id="Icons/arrow_drop_up_24px">
 <path id="icon" d="M7 14L12 9L17 14H7Z" fill="black"/>
 </g>
-<rect x="-140.5" y="-245.5" width="361" height="838" rx="15.5" stroke="#CAC4D0"/>
-</g>
-</g>
-</g>
-</g>
-<defs>
-<clipPath id="clip0_49823_12141">
-<path d="M-202 -640C-202 -673.137 -175.137 -700 -142 -700H1626C1659.14 -700 1686 -673.137 1686 -640V1283C1686 1291.84 1678.84 1299 1670 1299H-186C-194.837 1299 -202 1291.84 -202 1283V-640Z" fill="white"/>
-</clipPath>
-</defs>
 </svg>

@@ -16,6 +16,7 @@ import arrowIcon from "../../images/arrow_drop_24px.svg";
 import { TStore } from "../../services/types";
 import { IPost, IUser } from "../../services/types/data";
 import styles from "./page.module.css";
+import FilterUser from "../filter-user/filter-user";
 
 export default function Page() {
   const dispatch = useDispatch();
@@ -78,13 +79,16 @@ export default function Page() {
     }
     setValues({ ...values, sort: option });
   };
-  function compareString(arr: any, key: string, condition: 'upToDown' | 'downToUp') {
-    
+  function compareString(
+    arr: any,
+    key: string,
+    condition: "upToDown" | "downToUp"
+  ) {
     return arr.sort((a: any, b: any) => {
       if (a[key] > b[key]) {
-        return condition === 'upToDown' ? -1 : 1; 
+        return condition === "upToDown" ? -1 : 1;
       } else if (a[key] < b[key]) {
-        return condition === 'upToDown' ? 1 : -1;
+        return condition === "upToDown" ? 1 : -1;
       } else return 0;
     });
   }
@@ -96,9 +100,7 @@ export default function Page() {
         (filterName ? post.userId === +values.userId : 1)
       );
     });
-
     let postSorted: Array<IPost> = [];
-
     if (sortOption === "ID") {
       postSorted = [...postsFiltered].sort((a, b) =>
         sortSide === "upToDown" ? b.id - a.id : a.id - b.id
@@ -113,13 +115,15 @@ export default function Page() {
         );
       });
     } else if (sortOption === "наличию в избранном") {
-      sortSide === 'downToUp' ? postSorted = [...postSorted].concat(
-        postsFiltered.filter((post) => favourites.includes(post.id)),
-        postsFiltered.filter((post) => !favourites.includes(post.id))
-      ) : postSorted = [...postSorted].concat(
-        postsFiltered.filter((post) => !favourites.includes(post.id)),
-        postsFiltered.filter((post) => favourites.includes(post.id))
-      );
+      sortSide === "downToUp"
+        ? (postSorted = [...postSorted].concat(
+            postsFiltered.filter((post) => favourites.includes(post.id)),
+            postsFiltered.filter((post) => !favourites.includes(post.id))
+          ))
+        : (postSorted = [...postSorted].concat(
+            postsFiltered.filter((post) => !favourites.includes(post.id)),
+            postsFiltered.filter((post) => favourites.includes(post.id))
+          ));
     } else {
       postSorted = postsFiltered;
     }
@@ -142,7 +146,6 @@ export default function Page() {
     getPosts().then((posts) => {
       dispatch(addPosts(posts));
     });
-    return () => {};
   }, []);
   return (
     <>
@@ -170,38 +173,10 @@ export default function Page() {
                 name="title"
               />
             </form>
-            <div className={styles.filter_name}>
-              <p className={styles.filter_name__text}>{values.author}</p>
-              <div
-                className={styles.filter_arrow}
-                style={{ backgroundImage: `url(${arrowIcon})` }}
-                onClick={() => {
-                  setOpenFilterName(!openFilterName);
-                }}
-              />
-              {openFilterName && (
-                <div className={styles.filter_name__list}>
-                  <button
-                    type="button"
-                    className={styles.filter_name__listText}
-                    onClick={onFilterName}
-                    key={"all"}
-                  >
-                    Все
-                  </button>
-                  {users.map(({ name, id }) => (
-                    <button
-                      type="button"
-                      className={styles.filter_name__listText}
-                      onClick={onFilterName}
-                      key={id}
-                    >
-                      {name}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            <FilterUser
+              author={values.author}
+              onClick={onFilterName}
+            />
           </div>
         </div>
         <div className={styles.sorting}>
