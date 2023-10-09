@@ -17,6 +17,7 @@ import { TStore } from "../../services/types";
 import { IPost, IUser } from "../../services/types/data";
 import styles from "./page.module.css";
 import FilterUser from "../filter-user/filter-user";
+import FilterStar from "../filter-star/filter-star";
 
 export default function Page() {
   const dispatch = useDispatch();
@@ -149,16 +150,7 @@ export default function Page() {
       <header className={styles.header}>
         <h1 className={styles.title}>POSTS</h1>
         <div className={styles.filters}>
-          <button
-            className={styles.filter_star}
-            style={
-              filterStar
-                ? { backgroundImage: `url(${starFullIcon})` }
-                : { backgroundImage: `url(${starEmptyIcon})` }
-            }
-            type="button"
-            onClick={() => setFilterStar(!filterStar)}
-          />
+          <FilterStar filter={filterStar} setFilter={setFilterStar} />
           <div className={styles.filters_container}>
             <form className={styles.filter_title} onSubmit={onSubmit}>
               <input
