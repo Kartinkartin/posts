@@ -34,7 +34,6 @@ export default function Page() {
   // фильтры
   const [filterStar, setFilterStar] = useState(false);
   const [filterTitle, setFilterTitle] = useState(false);
-  const [openFilterName, setOpenFilterName] = useState(false);
   const [filterName, setFilterName] = useState(false);
   // сортировка
   const [openSort, setOpenSort] = useState(false);
@@ -56,7 +55,6 @@ export default function Page() {
     title ? setFilterTitle(true) : setFilterTitle(false);
   };
   const onFilterName = (e: any) => {
-    setOpenFilterName(false);
     const name = e.target.textContent;
     if (name !== "Все") {
       const user = users.filter((user) => user.name === name)[0];
@@ -140,12 +138,11 @@ export default function Page() {
     ));
   };
   useEffect(() => {
-    getUsers().then((users) => {
-      dispatch(addUsers(users));
-    });
-    getPosts().then((posts) => {
-      dispatch(addPosts(posts));
-    });
+    Promise.all([getUsers(), getPosts()])
+      .then(([users, posts]) => {
+        dispatch(addUsers(users));
+        dispatch(addPosts(posts));
+      })
   }, []);
   return (
     <>
@@ -173,10 +170,7 @@ export default function Page() {
                 name="title"
               />
             </form>
-            <FilterUser
-              author={values.author}
-              onClick={onFilterName}
-            />
+            <FilterUser author={values.author} onClick={onFilterName} />
           </div>
         </div>
         <div className={styles.sorting}>
@@ -250,7 +244,7 @@ export default function Page() {
         </div>
       </header>
       <main className={styles.container}>
-        {users.length !== null && posts.length !== null && postsRender()}
+        {users.length !== 0 && posts.length !== 0 && postsRender()}
         {/* case of error or loading */}
         {Array.isArray(chosen) && Boolean(chosen.length) && (
           <div className={styles.handlers}>

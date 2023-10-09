@@ -7,23 +7,15 @@
 
 .input {
     font-family: 'Roboto';
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 400;
     line-height: 20px; /* 142.857% */
     letter-spacing: 0.25px;
 }
 
 .variants {
-    position: relative;
-}
-
-.variant {
-    margin: 0;
-    font-family: 'Roboto';
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 20px; /* 142.857% */
-    letter-spacing: 0.25px;
+    display: flex;
+    flex-direction: row-reverse;
 }
 
 .handlers {

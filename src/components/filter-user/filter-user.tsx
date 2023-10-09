@@ -7,11 +7,13 @@ import styles from "./filter-user.module.css";
 interface IFilterProps {
   author: string;
   onClick: (e: any) => void;
+  needAllChose?: boolean;
 }
 
 export default function FilterUser({
   author,
   onClick,
+  needAllChose = true,
 }: IFilterProps) {
   const [openFilter, setOpenFilter] = useState(false);
   const users = useSelector((store: TStore) => store.users);
@@ -28,14 +30,15 @@ export default function FilterUser({
       />
       {openFilter && (
         <div className={styles.filter_name__list}>
-          <button
-            type="button"
-            className={styles.filter_name__listText}
-            onClick={(e) => {setOpenFilter(false); onClick(e)}}
-            key={"all"}
-          >
-            Все
-          </button>
+          {needAllChose && (
+            <button
+              type="button"
+              className={styles.filter_name__listText}
+              onClick={(e) => {setOpenFilter(false); onClick(e)}}
+            >
+              Все
+            </button>
+          )}
           {users.map(({ name, id }) => (
             <button
               type="button"
