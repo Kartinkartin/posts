@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { deletePost } from "../../services/reducers/posts";
+import { chosePost, deletePost } from "../../services/reducers/posts";
 import Button from "../../ui/buttons/button";
 import { deletePostReq } from "../api/api";
 import styles from "./popup-delete.module.css";
@@ -25,6 +25,7 @@ export default function PopupDelete({
     }
     closeModal();
   };
+
   return (
     <>
       <div className={styles.trash} />

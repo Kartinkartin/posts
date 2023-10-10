@@ -4,19 +4,34 @@
   box-sizing: border-box;
 }
 
+.title {
+  font-family: "Roboto";
+  font-size: 28px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 36px;
+  margin: 0;
+  text-align: center;
+}
+
+.button_add {
+  width: 36px;
+  height: 36px;
+  border: none;
+  cursor: pointer;
+  background-image: url('../../images/add_24px.svg');
+  background-position: center;
+  background-size: cover;
+  position: absolute;
+  top: 15px;
+  left: 17px;
+}
+
 .filters {
   display: flex;
   column-gap: 10px;
   align-items: center;
   padding: 5px 0;
-}
-
-.filter_star {
-  width: 45px;
-  height: 45px;
-  border: none;
-  background-position: center;
-  background-size: cover;
 }
 
 .filters_container {
@@ -92,14 +107,44 @@
   background-image: url('../../images/arrow_drop_up_24px.svg');
 }
 
-.title {
+.sort__list {
+  position: absolute;
+  z-index: 2;
+  top: 24px;
+  left: 0px;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0px 12px 24px 0px #15123321;
+  animation: show_filter_list 5s ease;
+}
+
+@keyframes show_filter_list {
+  from {
+    height: 0;
+  }
+  to {
+    height: 110px;
+  }
+}
+
+.sort__listText {
+  margin: 0;
+  padding: 0;
+  width: 145px;
   font-family: "Roboto";
-  font-size: 28px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 400;
-  line-height: 36px;
-  margin: 0;
-  text-align: center;
+  line-height: 16px;
+  text-align: left;
+}
+
+.filter_name__listText:hover {
+  background-color: #f8f9fb;
+  cursor: pointer;
 }
 
 .container {

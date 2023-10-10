@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import useModal from "../../hooks/use-modal";
+import { addToFav, choseManyPosts, chosePost } from "../../services/reducers/posts";
+import { getComments } from "../../services/reducers/comments";
 import chatImage from "../../images/chat_bubble_outline.svg";
 import chatActiveImage from "../../images/chat_bubble.svg";
 import pencilIcon from "../../images/mode_edit_24px.svg";
@@ -9,15 +10,11 @@ import starEmptyIcon from "../../images/star_border.svg";
 import starIcon from "../../images/star.svg";
 import checkBox from "../../images/check_box_outline_blank.svg";
 import fullCheckBox from "../../images/check_box.svg";
-import { addToFav, choseManyPosts, chosePost } from "../../services/reducers/posts";
 import { getCommentsPost } from "../api/api";
-import Modal from "../../ui/modal/modal";
-import { getComments } from "../../services/reducers/comments";
-import styles from "./post.module.css";
+import Comment from "../comment/comment";
 import { TStore } from "../../services/types";
 import { IComment } from "../../services/types/data";
-import Comment from "../comment/comment";
-import PopupMode from "../popup-mode/popup-mode";
+import styles from "./post.module.css";
 
 interface IPostProps {
   title: string;
@@ -25,11 +22,11 @@ interface IPostProps {
   text: string;
   id: number;
   onDelete: () => void;
+  onMode: () => void;
 }
 
-export default function Post({ title, author, text, id, onDelete }: IPostProps) {
+export default function Post({ title, author, text, id, onDelete, onMode }: IPostProps) {
   const dispatch = useDispatch();
-  const { isModalOpen, openModal, closeModal } = useModal();
   const [showComments, setShowComments] = useState(false);
   const comments = useSelector((store: TStore) => store.comments);
   const { favourites, chosen } = useSelector((store: TStore) => store.posts);
@@ -52,6 +49,10 @@ export default function Post({ title, author, text, id, onDelete }: IPostProps) 
     dispatch(chosePost(id));
     onDelete();
   };
+  const modeHandler = (id: number) => {
+    dispatch(chosePost(id));
+    onMode();
+  }
 
   return (
     <div className={styles.container}>
@@ -83,7 +84,7 @@ export default function Post({ title, author, text, id, onDelete }: IPostProps) 
           type="button"
           className={styles.button}
           style={{ backgroundImage: `url(${pencilIcon})` }}
-          onClick={openModal}
+          onClick={() => modeHandler(id)}
         />
         <button
           type="button"
@@ -109,11 +110,6 @@ export default function Post({ title, author, text, id, onDelete }: IPostProps) 
             return <Comment name={name} email={email} body={body} key={id} />;
           })}
         </div>
-      )}
-      {isModalOpen && (
-        <Modal onClose={closeModal}>
-          <PopupMode id={id} onClose={closeModal} />
-        </Modal>
       )}
     </div>
   );

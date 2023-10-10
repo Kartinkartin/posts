@@ -56,3 +56,11 @@ export async function modePost(data: IPost) {
     headers: config.headers,
   });
 }
+
+export async function postNewPost(data: IPost) {
+  return await request(`${config.baseUrl}/posts`, {
+    method: 'POST',
+    body: JSON.stringify({...data}),
+    headers: config.headers,
+  });
+}

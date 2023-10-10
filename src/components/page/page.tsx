@@ -3,21 +3,20 @@ import { useDispatch, useSelector } from "react-redux";
 import useModal from "../../hooks/use-modal";
 import { useForm } from "../../hooks/use-form";
 import { getPosts, getUsers } from "../api/api";
-import { addPosts } from "../../services/reducers/posts";
+import { addPosts, chosePost } from "../../services/reducers/posts";
 import { addUsers } from "../../services/reducers/users";
+import FilterUser from "../filter-user/filter-user";
+import FilterStar from "../filter-star/filter-star";
 import Post from "../post/post";
 import Button from "../../ui/buttons/button";
 import Modal from "../../ui/modal/modal";
 import PopupDelete from "../popup-delete/popup-delete";
 import PopupAddFafourite from "../popup-add-favourite/popup-add-favourite";
-import starEmptyIcon from "../../images/star_border.svg";
-import starFullIcon from "../../images/star.svg";
 import arrowIcon from "../../images/arrow_drop_24px.svg";
 import { TStore } from "../../services/types";
 import { IPost, IUser } from "../../services/types/data";
 import styles from "./page.module.css";
-import FilterUser from "../filter-user/filter-user";
-import FilterStar from "../filter-star/filter-star";
+import PopupMode from "../popup-mode/popup-mode";
 
 export default function Page() {
   const dispatch = useDispatch();
@@ -37,17 +36,33 @@ export default function Page() {
   const [filterTitle, setFilterTitle] = useState(false);
   const [filterName, setFilterName] = useState(false);
   // сортировка
+  const sortButtons = [
+    "--",
+    "ID",
+    "названию",
+    "имени автора",
+    "наличию в избранном",
+  ];
   const [openSort, setOpenSort] = useState(false);
   const [sortOption, setSortOption] = useState<string | null>(null);
   const [sortSide, setSortSide] = useState<"upToDown" | "downToUp" | null>(
     null
   );
   //для модалок подтверждения удаления и добавления/изъятия избранного
-  const { isModalOpen, openModal, closeModal } = useModal();
   const {
-    isModalOpen: isAddingFavourite,
-    openModal: addFavor,
-    closeModal: closeFavor,
+    isModalOpen: isDeleteOpen,
+    openModal: openDeleteModal,
+    closeModal: closeDeleteModal,
+  } = useModal();
+  const {
+    isModalOpen: isAddOpen,
+    openModal: openAddModal,
+    closeModal: closeAddModal,
+  } = useModal();
+  const {
+    isModalOpen: isModeOpen,
+    openModal: openModeModal,
+    closeModal: closeModeModal,
   } = useModal();
 
   const onSubmit = (e: any) => {
@@ -78,6 +93,12 @@ export default function Page() {
     }
     setValues({ ...values, sort: option });
   };
+  const onClose = (handler: () => void) => {
+    // initial to state.posts.chosen is []
+    if (typeof chosen === "number") {dispatch(chosePost([]));}
+    handler();
+  };
+
   function compareString(
     arr: any,
     key: string,
@@ -90,7 +111,7 @@ export default function Page() {
         return condition === "upToDown" ? 1 : -1;
       } else return 0;
     });
-  }
+  };
   const postsRender = () => {
     const postsFiltered = posts.filter((post) => {
       return (
@@ -134,21 +155,22 @@ export default function Page() {
         author={users.find((user) => user.id === userId)!.name}
         id={id}
         key={`post${id}`}
-        onDelete={openModal}
+        onDelete={openDeleteModal}
+        onMode={openModeModal}
       />
     ));
   };
   useEffect(() => {
-    Promise.all([getUsers(), getPosts()])
-      .then(([users, posts]) => {
-        dispatch(addUsers(users));
-        dispatch(addPosts(posts));
-      })
+    Promise.all([getUsers(), getPosts()]).then(([users, posts]) => {
+      dispatch(addUsers(users));
+      dispatch(addPosts(posts));
+    });
   }, []);
   return (
     <>
       <header className={styles.header}>
         <h1 className={styles.title}>POSTS</h1>
+        <button className={styles.button_add} type="button" onClick={openModeModal} />
         <div className={styles.filters}>
           <FilterStar filter={filterStar} setFilter={setFilterStar} />
           <div className={styles.filters_container}>
@@ -177,44 +199,17 @@ export default function Page() {
                 }}
               />
               <p className={styles.sorting__text}>{values.sort}</p>
-
               {openSort && (
-                <div className={styles.filter_name__list}>
-                  <button
-                    type="button"
-                    className={styles.filter_name__listText}
-                    onClick={onSort}
-                  >
-                    --
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.filter_name__listText}
-                    onClick={onSort}
-                  >
-                    ID
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.filter_name__listText}
-                    onClick={onSort}
-                  >
-                    названию
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.filter_name__listText}
-                    onClick={onSort}
-                  >
-                    имени автора
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.filter_name__listText}
-                    onClick={onSort}
-                  >
-                    наличию в избранном
-                  </button>
+                <div className={styles.sort__list}>
+                  {sortButtons.map((button) => (
+                    <button
+                      type="button"
+                      className={styles.sort__listText}
+                      onClick={onSort}
+                    >
+                      {button}
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
@@ -244,24 +239,32 @@ export default function Page() {
               text="Удалить"
               type="button"
               size="large"
-              onClick={openModal}
+              onClick={openDeleteModal}
             />
             <Button
               text="Избранное"
               type="button"
               size="large"
-              onClick={addFavor}
+              onClick={openDeleteModal}
             />
           </div>
         )}
-        {isModalOpen && (
-          <Modal onClose={closeModal}>
-            <PopupDelete closeModal={closeModal} id={chosen} />
+        {isDeleteOpen && (
+          <Modal onClose={() => onClose(closeDeleteModal)}>
+            <PopupDelete closeModal={closeDeleteModal} id={chosen} />
           </Modal>
         )}
-        {isAddingFavourite && Array.isArray(chosen) && (
-          <Modal onClose={closeFavor}>
-            <PopupAddFafourite closeModal={closeFavor} id={chosen} />
+        {isAddOpen && Array.isArray(chosen) && (
+          <Modal onClose={openAddModal}>
+            <PopupAddFafourite id={chosen} closeModal={closeAddModal}  />
+          </Modal>
+        )}
+        {isModeOpen && (
+          <Modal onClose={() => onClose(closeModeModal)}>
+            <PopupMode 
+              id={typeof chosen === "number" ? chosen : null} 
+              onClose={() => onClose(closeModeModal)} 
+            />
           </Modal>
         )}
       </main>

@@ -11,6 +11,9 @@ const postsToolkitSlice = createSlice({
     addPosts(state, action) {
       state.posts.push(...action.payload);
     },
+    addPost(state, action) {
+      state.posts.push(action.payload);
+    },
     deletePost(state, action) {
       const id = action.payload;
       const post = state.posts.find((post) => post.id === id);
@@ -25,6 +28,7 @@ const postsToolkitSlice = createSlice({
       const post = state.posts.find((post) => post.id === id);
       const index = state.posts.indexOf(post);
       state.posts[index] = { id, userId, title, body };
+      state.chosen = [];
     },
     addToFav(state, action) {
       const id = action.payload;
@@ -59,6 +63,7 @@ const postsToolkitSlice = createSlice({
 export default postsToolkitSlice.reducer;
 export const {
   addPosts,
+  addPost,
   deletePost,
   changePost,
   addToFav,
