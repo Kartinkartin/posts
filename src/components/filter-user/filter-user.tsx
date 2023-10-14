@@ -1,6 +1,7 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import arrowIcon from "../../images/arrow_drop_24px.svg";
+import arrowIconRotate from "../../images/arrow_drop_up_24px.svg"; 
 import { TStore } from "../../services/types";
 import styles from "./filter-user.module.css";
 
@@ -22,8 +23,7 @@ export default function FilterUser({
     <div className={styles.filter_name}>
       <p className={styles.filter_name__text}>{author}</p>
       <div
-        className={styles.filter_arrow}
-        style={{ backgroundImage: `url(${arrowIcon})` }}
+        className={`${styles.filter_arrow} ${openFilter && styles.filter_arrow_active}`}
         onClick={() => {
           setOpenFilter(!openFilter);
         }}

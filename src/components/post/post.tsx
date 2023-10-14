@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addToFav, choseManyPosts, chosePost } from "../../services/reducers/posts";
+import {
+  addToFav,
+  choseManyPosts,
+  chosePost,
+} from "../../services/reducers/posts";
 import { getComments } from "../../services/reducers/comments";
 import chatImage from "../../images/chat_bubble_outline.svg";
 import chatActiveImage from "../../images/chat_bubble.svg";
@@ -25,7 +29,14 @@ interface IPostProps {
   onMode: () => void;
 }
 
-export default function Post({ title, author, text, id, onDelete, onMode }: IPostProps) {
+export default function Post({
+  title,
+  author,
+  text,
+  id,
+  onDelete,
+  onMode,
+}: IPostProps) {
   const dispatch = useDispatch();
   const [showComments, setShowComments] = useState(false);
   const comments = useSelector((store: TStore) => store.comments);
@@ -52,10 +63,14 @@ export default function Post({ title, author, text, id, onDelete, onMode }: IPos
   const modeHandler = (id: number) => {
     dispatch(chosePost(id));
     onMode();
-  }
+  };
 
   return (
-    <div className={styles.container}>
+    <div
+      className={`${styles.container} ${
+        favourites.includes(id) && styles.favourite
+      }`}
+    >
       <h3 className={styles.title}>{title}</h3>
       <p className={styles.text}>{text}</p>
       <p className={styles.author}>{author}</p>

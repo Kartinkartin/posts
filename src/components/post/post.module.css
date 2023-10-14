@@ -11,6 +11,10 @@
   padding-bottom: 10px;
 }
 
+.favourite {
+  background-color: #E6E0E9;
+}
+
 .title {
   font-family: "Roboto";
   font-size: 14px;
@@ -56,6 +60,7 @@
   background-size: cover;
   border: none;
   cursor: pointer;
+  background-color: transparent;
 }
 
 .comments {
