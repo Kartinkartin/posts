@@ -20,8 +20,8 @@ export default function FilterUser({
   const users = useSelector((store: TStore) => store.users);
 
   return (
-    <div className={styles.filter_name}>
-      <p className={styles.filter_name__text}>{author}</p>
+    <div className={styles.filter}>
+      <p className={styles.filter__text}>{author}</p>
       <div
         className={`${styles.filter_arrow} ${openFilter && styles.filter_arrow_active}`}
         onClick={() => {
@@ -29,11 +29,11 @@ export default function FilterUser({
         }}
       />
       {openFilter && (
-        <div className={styles.filter_name__list}>
+        <div className={styles.filter__list}>
           {needAllChose && (
             <button
               type="button"
-              className={styles.filter_name__listText}
+              className={styles.filter__listText}
               onClick={(e) => {setOpenFilter(false); onClick(e)}}
             >
               Все
@@ -42,7 +42,7 @@ export default function FilterUser({
           {users.map(({ name, id }) => (
             <button
               type="button"
-              className={styles.filter_name__listText}
+              className={styles.filter__listText}
               onClick={(e) => {setOpenFilter(false); onClick(e)}}
               key={id}
             >

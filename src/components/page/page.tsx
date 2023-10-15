@@ -12,11 +12,14 @@ import Button from "../../ui/buttons/button";
 import Modal from "../../ui/modal/modal";
 import PopupDelete from "../popup-delete/popup-delete";
 import PopupAddFafourite from "../popup-add-favourite/popup-add-favourite";
-import arrowIcon from "../../images/arrow_drop_24px.svg";
 import { TStore } from "../../services/types";
 import { IPost, IUser } from "../../services/types/data";
 import styles from "./page.module.css";
 import PopupMode from "../popup-mode/popup-mode";
+import Sorting from "../sorting/sorting";
+import { amountPosts } from "../../services/data";
+import Navigator from "../navigator/navigator";
+import FilterAmount from "../filter-amount/filter-amount";
 
 export default function Page() {
   const dispatch = useDispatch();
@@ -30,25 +33,21 @@ export default function Page() {
     author: "Все",
     userId: "",
     sort: "--",
+    amount: amountPosts[0].toString(),
   });
   // фильтры
   const [filterStar, setFilterStar] = useState(false);
   const [filterTitle, setFilterTitle] = useState(false);
   const [filterName, setFilterName] = useState(false);
   // сортировка
-  const sortButtons = [
-    "--",
-    "ID",
-    "названию",
-    "имени автора",
-    "наличию в избранном",
-  ];
   const [openSort, setOpenSort] = useState(false);
   const [sortOption, setSortOption] = useState<string | null>(null);
   const [sortSide, setSortSide] = useState<"upToDown" | "downToUp" | null>(
     null
   );
-  //для модалок подтверждения удаления и добавления/изъятия избранного
+  // количество постов на странице, номер страницы
+  const [page, setPage] = useState(1);
+  //для модалок
   const {
     isModalOpen: isDeleteOpen,
     openModal: openDeleteModal,
@@ -81,6 +80,10 @@ export default function Page() {
       setFilterName(false);
     }
   };
+  const amountHandler = (e: any) => {
+    const amount = e.target.textContent;
+    setValues({ ...values, amount });
+  };
   const onSort = (e: any) => {
     setOpenSort(false);
     const option = e.target.textContent;
@@ -95,10 +98,11 @@ export default function Page() {
   };
   const onClose = (handler: () => void) => {
     // initial to state.posts.chosen is []
-    if (typeof chosen === "number") {dispatch(chosePost([]));}
+    if (typeof chosen === "number") {
+      dispatch(chosePost([]));
+    }
     handler();
   };
-
   function compareString(
     arr: any,
     key: string,
@@ -111,9 +115,9 @@ export default function Page() {
         return condition === "upToDown" ? 1 : -1;
       } else return 0;
     });
-  };
+  }
   const postsRender = () => {
-    const postsFiltered = posts.filter((post) => {
+    const postsFiltered = posts.filter((post: IPost) => {
       return (
         (filterStar ? favourites.includes(post.id) : 1) &&
         (filterTitle ? post.title.includes(values.title) : 1) &&
@@ -147,8 +151,12 @@ export default function Page() {
     } else {
       postSorted = postsFiltered;
     }
+    const amount = values.amount === 'Все' ? posts.length : +values.amount;
+    debugger
+    const startIndex = (page - 1) * amount;
+    const postsToRender = [...postSorted].splice(startIndex, amount);
 
-    return postSorted.map(({ title, body, userId, id }) => (
+    return postsToRender.map(({ title, body, userId, id }) => (
       <Post
         title={title}
         text={body}
@@ -170,7 +178,11 @@ export default function Page() {
     <>
       <header className={styles.header}>
         <h1 className={styles.title}>POSTS</h1>
-        <button className={styles.button_add} type="button" onClick={openModeModal} />
+        <button
+          className={styles.button_add}
+          type="button"
+          onClick={openModeModal}
+        />
         <div className={styles.filters}>
           <FilterStar filter={filterStar} setFilter={setFilterStar} />
           <div className={styles.filters_container}>
@@ -187,50 +199,14 @@ export default function Page() {
             <FilterUser author={values.author} onClick={onFilterName} />
           </div>
         </div>
-        <div className={styles.sorting}>
-          <p className={styles.sorting__text}>Сортировать по: </p>
-          <div className={styles.sorting__container}>
-            <div className={styles.sort_options}>
-              <div
-                className={`${styles.filter_arrow} ${openSort&&styles.filter_arrow_active}`}
-                onClick={() => {
-                  setOpenSort(!openSort);
-                }}
-              />
-              <p className={styles.sorting__text}>{values.sort}</p>
-              {openSort && (
-                <div className={styles.sort__list}>
-                  {sortButtons.map((button) => (
-                    <button
-                      type="button"
-                      className={styles.sort__listText}
-                      onClick={onSort}
-                      key={button}
-                    >
-                      {button}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-            {sortSide && (
-              <div className={styles.sort_buttons}>
-                <button
-                  className={styles.sort_buttons__button}
-                  type="button"
-                  onClick={() => setSortSide("upToDown")}
-                  style={sortSide === "upToDown" ? { backgroundColor: '#E6E0E9' } : {}}
-                />
-                <button
-                  className={`${styles.sort_buttons__button} ${styles.sort_buttons__button_flip}`}
-                  type="button"
-                  onClick={() => setSortSide("downToUp")}
-                  style={sortSide === "downToUp" ? { backgroundColor: '#E6E0E9' } : {}}
-                />
-              </div>
-            )}
-          </div>
-        </div>
+        <Sorting
+          isOpen={openSort}
+          setOpen={setOpenSort}
+          onSort={onSort}
+          sortSide={sortSide}
+          setSortSide={setSortSide}
+          sortType={values.sort}
+        />
       </header>
       <main className={styles.container}>
         {users.length !== 0 && posts.length !== 0 && postsRender()}
@@ -258,18 +234,22 @@ export default function Page() {
         )}
         {isAddOpen && Array.isArray(chosen) && (
           <Modal onClose={openAddModal}>
-            <PopupAddFafourite id={chosen} closeModal={closeAddModal}  />
+            <PopupAddFafourite id={chosen} closeModal={closeAddModal} />
           </Modal>
         )}
         {isModeOpen && (
           <Modal onClose={() => onClose(closeModeModal)}>
-            <PopupMode 
-              id={typeof chosen === "number" ? chosen : null} 
-              onClose={() => onClose(closeModeModal)} 
+            <PopupMode
+              id={typeof chosen === "number" ? chosen : null}
+              onClose={() => onClose(closeModeModal)}
             />
           </Modal>
         )}
       </main>
+      <footer className={styles.footer}>
+        <FilterAmount amount={values.amount} onClick={amountHandler} />
+        <Navigator page={page} setPage={setPage} amount={values.amount === "Все" ? posts.length : +values.amount} />
+      </footer>
     </>
   );
-}
+};

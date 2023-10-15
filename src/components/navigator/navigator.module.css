@@ -1,0 +1,28 @@
+.navigator {
+  display: flex;
+  flex-direction: row;
+  column-gap: 10px;
+}
+
+.navigator__button {
+  background-color: transparent;
+  border: none;
+  width: 24px;
+  height: 24px;
+}
+
+.navigator__button:active {
+  background-color: #e6e0e9;
+}
+
+.navigator__button:disabled {
+  opacity: 0.5;
+}
+
+.navigator__next {
+  background-image: url("../../images/navigate_next.svg");
+}
+
+.navigator__prev {
+  background-image: url("../../images/navigate_before.svg");
+}

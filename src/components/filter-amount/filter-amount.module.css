@@ -1,4 +1,4 @@
-.filter {
+.amount {
   position: relative;
   display: flex;
   flex-direction: row;
@@ -15,23 +15,10 @@
   text-align: right;
 }
 
-.filter_arrow {
-  margin-top: 2px;
-  width: 24px;
-  height: 24px;
-  cursor: pointer;
-  background-image: url('../../images/arrow_drop_24px.svg');
-  transition: transform 0.3s linear;
-}
-
-.filter_arrow_active {
-  transform: rotate(-180deg);
-}
-
 .filter__list {
   position: absolute;
   z-index: 2;
-  top: 24px;
+  bottom: 24px;
   right: 0px;
   display: flex;
   flex-direction: column;
@@ -52,7 +39,7 @@
 .filter__listText {
   margin: 0;
   padding: 0;
-  width: 145px;
+  width: 50px;
   font-family: "Roboto";
   font-size: 12px;
   font-style: normal;
@@ -75,4 +62,17 @@
 .filter__listText:hover {
   background-color: #f8f9fb;
   cursor: pointer;
+}
+
+.filter_arrow {
+  margin-top: 2px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  background-image: url("../../images/arrow_drop_24px.svg");
+  transition: transform 0.3s linear;
+}
+
+.filter_arrow_active {
+  transform: rotate(-180deg);
 }
