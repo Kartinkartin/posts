@@ -8,7 +8,8 @@
   padding-right: 10px;
   padding-left: 10px;
   padding-top: 10px;
-  padding-bottom: 10px;
+  padding-bottom: 40px;
+  position: relative;
 }
 
 .favourite {
@@ -51,6 +52,10 @@
   display: flex;
   column-gap: 10px;
   justify-content: center;
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  right: 0;
 }
 
 .button {
@@ -65,4 +70,10 @@
 
 .comments {
   padding-top: 10px;
+}
+
+@media screen and (min-width: 1040px) {
+  .comments_open {
+    grid-row-end: span 3;
+  }
 }

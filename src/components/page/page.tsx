@@ -152,7 +152,6 @@ export default function Page() {
       postSorted = postsFiltered;
     }
     const amount = values.amount === 'Все' ? posts.length : +values.amount;
-    debugger
     const startIndex = (page - 1) * amount;
     const postsToRender = [...postSorted].splice(startIndex, amount);
 

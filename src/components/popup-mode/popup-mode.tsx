@@ -33,7 +33,6 @@ export default function PopupMode({ id, onClose }: IPopupProps) {
           dispatch(changePost({ id, title, body, userId: newAuthor!.id }))
         );
     } else {
-      debugger;
       if (title.length !== 0 && body.length !== 0 && newAuthor) {
         const id = posts[posts.length-1].id + 1;
         postNewPost({ id, title, body, userId: newAuthor!.id })

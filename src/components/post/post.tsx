@@ -69,7 +69,7 @@ export default function Post({
     <div
       className={`${styles.container} ${
         favourites.includes(id) && styles.favourite
-      }`}
+      } ${showComments && styles.comments_open}`}
     >
       <h3 className={styles.title}>{title}</h3>
       <p className={styles.text}>{text}</p>
