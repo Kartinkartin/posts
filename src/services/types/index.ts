@@ -7,5 +7,7 @@ export type TStore = {
         chosen: [number] | number,
     },
     users: Array<IUser>,
-    comments: any,
+    comments: {
+        [key: number]: Array<IComment>
+    },
 }

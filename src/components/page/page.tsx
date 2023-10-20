@@ -64,29 +64,29 @@ export default function Page() {
     closeModal: closeModeModal,
   } = useModal();
 
-  const onSubmit = (e: any) => {
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { title } = values;
     title ? setFilterTitle(true) : setFilterTitle(false);
   };
-  const onFilterName = (e: any) => {
-    const name = e.target.textContent;
+  const onFilterName = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const name = (e.target as HTMLButtonElement).textContent;
     if (name !== "Все") {
       const user = users.filter((user) => user.name === name)[0];
-      setValues({ ...values, author: name, userId: user.id.toString() });
+      setValues({ ...values, author: name ?? '', userId: user.id.toString() });
       setFilterName(true);
     } else {
       setValues({ ...values, author: "Все", userId: "" });
       setFilterName(false);
     }
   };
-  const amountHandler = (e: any) => {
-    const amount = e.target.textContent;
+  const amountHandler = (e: React.MouseEvent<HTMLElement>) => {
+    const amount = (e.target as HTMLElement).textContent ?? '10';
     setValues({ ...values, amount });
   };
-  const onSort = (e: any) => {
+  const onSort = (e: React.MouseEvent<HTMLElement>) => {
     setOpenSort(false);
-    const option = e.target.textContent;
+    const option = (e.target as HTMLElement).textContent ?? '--';
     if (option === "--") {
       setSortOption(null);
       setSortSide(null);
@@ -104,7 +104,7 @@ export default function Page() {
     handler();
   };
   function compareString(
-    arr: any,
+    arr: Array<IPost | IUser>,
     key: string,
     condition: "upToDown" | "downToUp"
   ) {
@@ -130,9 +130,9 @@ export default function Page() {
         sortSide === "upToDown" ? b.id - a.id : a.id - b.id
       );
     } else if (sortOption === "названию") {
-      postSorted = compareString(postsFiltered, "title", sortSide!);
+      postSorted = compareString(postsFiltered, "title", sortSide!) as Array<IPost>;
     } else if (sortOption === "имени автора") {
-      const usersSort = compareString([...users], "name", sortSide!);
+      const usersSort = compareString([...users], "name", sortSide!) as Array<IUser>;
       usersSort.forEach((user: IUser) => {
         postSorted = [...postSorted].concat(
           [...postsFiltered].filter((post) => post.userId === user.id)
@@ -151,7 +151,7 @@ export default function Page() {
     } else {
       postSorted = postsFiltered;
     }
-    const amount = values.amount === 'Все' ? posts.length : +values.amount;
+    const amount = values.amount === "Все" ? posts.length : +values.amount;
     const startIndex = (page - 1) * amount;
     const postsToRender = [...postSorted].splice(startIndex, amount);
 
@@ -246,9 +246,15 @@ export default function Page() {
         )}
       </main>
       <footer className={styles.footer}>
-        <FilterAmount amount={values.amount} onClick={amountHandler} />
-        <Navigator page={page} setPage={setPage} amount={values.amount === "Все" ? posts.length : +values.amount} />
+        <div className={styles.footer__container}>
+          <FilterAmount amount={values.amount} onClick={amountHandler} />
+          <Navigator
+            page={page}
+            setPage={setPage}
+            amount={values.amount === "Все" ? posts.length : +values.amount}
+          />
+        </div>
       </footer>
     </>
   );
-};
+}

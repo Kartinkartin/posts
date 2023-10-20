@@ -6,6 +6,10 @@ type TOptions = {
   body?: string; 
 }
 
+export interface TResponse<T> extends Response {
+  json(): Promise<T>
+}
+
 const config = {
   baseUrl: "https://jsonplaceholder.typicode.com",
   headers: {
@@ -13,7 +17,7 @@ const config = {
   }
 };
 
-function checkRes(res: any) {
+function checkRes<T>(res: TResponse<T>) {
   if (res.ok) {
     return res.json();
   }

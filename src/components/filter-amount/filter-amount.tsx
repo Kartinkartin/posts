@@ -4,7 +4,7 @@ import styles from "./filter-amount.module.css";
 
 interface IFilterProps {
   amount: string;
-  onClick: (e: any) => void;
+  onClick: (e: React.MouseEvent<HTMLElement>) => void;
 }
 export default function FilterAmount({ amount, onClick }: IFilterProps) {
   const [openFilter, setOpenFilter] = useState(false);

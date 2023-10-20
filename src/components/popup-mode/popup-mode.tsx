@@ -45,9 +45,9 @@ export default function PopupMode({ id, onClose }: IPopupProps) {
     onClose();
   };
 
-  const onFilter = (e: any) => {
-    const name = e.target.textContent;
-    setValues({ ...values, author: name });
+  const onFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const name = (e.target as HTMLButtonElement).textContent;
+    setValues({ ...values, author: name ?? '' });
   };
 
   return (

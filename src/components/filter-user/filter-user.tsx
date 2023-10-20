@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import arrowIcon from "../../images/arrow_drop_24px.svg";
-import arrowIconRotate from "../../images/arrow_drop_up_24px.svg"; 
 import { TStore } from "../../services/types";
 import styles from "./filter-user.module.css";
 
 interface IFilterProps {
   author: string;
-  onClick: (e: any) => void;
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   needAllChose?: boolean;
 }
 

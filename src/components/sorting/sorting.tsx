@@ -6,7 +6,7 @@ import styles from "./sorting.module.css";
 interface ISortProps {
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  onSort: (e: any) => void;
+  onSort: (e: React.MouseEvent<HTMLElement>) => void;
   sortSide: string | null;
   setSortSide: Dispatch<SetStateAction<"upToDown" | "downToUp" | null>>;
   sortType: string;
