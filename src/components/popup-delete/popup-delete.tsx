@@ -17,10 +17,14 @@ export default function PopupDelete({
 
   const deleteHandler = (id: number | Array<number>) => {
     if (typeof id === 'number') {
-      deletePostReq(id).then(() => dispatch(deletePost(id)));
+      deletePostReq(id)
+      .then(() => dispatch(deletePost(id)))
+      .catch(() => console.log('error'));
     } else {
       id.forEach(id => (
-        deletePostReq(id).then(() => dispatch(deletePost(id)))
+        deletePostReq(id)
+        .then(() => dispatch(deletePost(id)))
+        .catch(() => console.log('error'))
       ))
     }
     closeModal();

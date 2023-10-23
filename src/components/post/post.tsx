@@ -47,9 +47,11 @@ export default function Post({
   };
   const chatHandler = async (id: number) => {
     if (!Object.hasOwn(comments, id) || comments[id].length === 0) {
-      await getCommentsPost(id).then((comments) =>
+      await getCommentsPost(id)
+      .then((comments) =>
         dispatch(getComments({ id, comments }))
-      );
+      )
+      .catch(() => console.log('error'));
     }
     setShowComments(!showComments);
   };

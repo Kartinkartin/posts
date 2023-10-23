@@ -27,19 +27,21 @@ export default function PopupMode({ id, onClose }: IPopupProps) {
     e.preventDefault();
     const {title, body} = values;
     const newAuthor = users.find((user) => user.name === values.author) ?? null;
-    if (id) {
-      modePost({ id, title, body, userId: newAuthor!.id })
+    if (id && newAuthor) {
+      modePost({ id, title, body, userId: newAuthor.id})
         .then(() =>
-          dispatch(changePost({ id, title, body, userId: newAuthor!.id }))
-        );
+          dispatch(changePost({ id, title, body, userId: newAuthor.id }))
+        )
+      .catch(() => console.log('error'));
     } else {
       if (title.length !== 0 && body.length !== 0 && newAuthor) {
         const id = posts[posts.length-1].id + 1;
-        postNewPost({ id, title, body, userId: newAuthor!.id })
+        postNewPost({ id, title, body, userId: newAuthor?.id })
           .then(() =>
-            dispatch(addPost({ id, title, body, userId: newAuthor!.id }))
+            dispatch(addPost({ id, title, body, userId: newAuthor?.id }))
           )
-      }
+          .catch(() => console.log('error'))
+        }
     }
     
     onClose();

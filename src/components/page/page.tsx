@@ -20,6 +20,7 @@ import Sorting from "../sorting/sorting";
 import { amountPosts } from "../../services/data";
 import Navigator from "../navigator/navigator";
 import FilterAmount from "../filter-amount/filter-amount";
+import EmptyRender from "../empty-posts/empty-posts";
 
 export default function Page() {
   const dispatch = useDispatch();
@@ -73,7 +74,7 @@ export default function Page() {
     const name = (e.target as HTMLButtonElement).textContent;
     if (name !== "Все") {
       const user = users.filter((user) => user.name === name)[0];
-      setValues({ ...values, author: name ?? '', userId: user.id.toString() });
+      setValues({ ...values, author: name ?? "", userId: user.id.toString() });
       setFilterName(true);
     } else {
       setValues({ ...values, author: "Все", userId: "" });
@@ -81,12 +82,12 @@ export default function Page() {
     }
   };
   const amountHandler = (e: React.MouseEvent<HTMLElement>) => {
-    const amount = (e.target as HTMLElement).textContent ?? '10';
+    const amount = (e.target as HTMLElement).textContent ?? "10";
     setValues({ ...values, amount });
   };
   const onSort = (e: React.MouseEvent<HTMLElement>) => {
     setOpenSort(false);
-    const option = (e.target as HTMLElement).textContent ?? '--';
+    const option = (e.target as HTMLElement).textContent ?? "--";
     if (option === "--") {
       setSortOption(null);
       setSortSide(null);
@@ -103,7 +104,7 @@ export default function Page() {
     }
     handler();
   };
-  function compareString(
+  function compareStrings(
     arr: Array<IPost | IUser>,
     key: string,
     condition: "upToDown" | "downToUp"
@@ -130,9 +131,17 @@ export default function Page() {
         sortSide === "upToDown" ? b.id - a.id : a.id - b.id
       );
     } else if (sortOption === "названию") {
-      postSorted = compareString(postsFiltered, "title", sortSide!) as Array<IPost>;
+      postSorted = compareStrings(
+        postsFiltered,
+        "title",
+        sortSide ?? "downToUp"
+      ) as Array<IPost>;
     } else if (sortOption === "имени автора") {
-      const usersSort = compareString([...users], "name", sortSide!) as Array<IUser>;
+      const usersSort = compareStrings(
+        [...users],
+        "name",
+        sortSide ?? "downToUp"
+      ) as Array<IUser>;
       usersSort.forEach((user: IUser) => {
         postSorted = [...postSorted].concat(
           [...postsFiltered].filter((post) => post.userId === user.id)
@@ -155,17 +164,20 @@ export default function Page() {
     const startIndex = (page - 1) * amount;
     const postsToRender = [...postSorted].splice(startIndex, amount);
 
-    return postsToRender.map(({ title, body, userId, id }) => (
+    return postsToRender.length !== 0 ? (postsToRender.map(({ title, body, userId, id }) => (
       <Post
         title={title}
         text={body}
-        author={users.find((user) => user.id === userId)!.name}
+        author={users.find((user) => user.id === userId)?.name ?? ""}
         id={id}
         key={`post${id}`}
         onDelete={openDeleteModal}
         onMode={openModeModal}
       />
-    ));
+    ))
+    ) : (
+      <EmptyRender text="Не найдено, измените условия фильтрации"/>
+    )
   };
   useEffect(() => {
     Promise.all([getUsers(), getPosts()]).then(([users, posts]) => {
@@ -209,6 +221,9 @@ export default function Page() {
       </header>
       <main className={styles.container}>
         {users.length !== 0 && posts.length !== 0 && postsRender()}
+        {(users.length === 0 || posts.length === 0) && (
+          <EmptyRender text="Не найдено!" />
+        )}
         {/* case of error or loading */}
         {Array.isArray(chosen) && Boolean(chosen.length) && (
           <div className={styles.handlers}>
