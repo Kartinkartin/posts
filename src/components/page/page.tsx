@@ -87,6 +87,7 @@ export default function Page() {
   const amountHandler = (e: React.MouseEvent<HTMLElement>) => {
     const amount = (e.target as HTMLElement).textContent ?? "10";
     setValues({ ...values, amount });
+    localStorage.setItem('amount', amount);
   };
   const onSort = (e: React.MouseEvent<HTMLElement>) => {
     setOpenSort(false);
@@ -191,6 +192,7 @@ export default function Page() {
       dispatch(addUsers(users));
       dispatch(addPosts(posts));
     });
+    setValues({...values, 'amount': localStorage.getItem('amount') ?? values.amount});
   }, []);
   return (
     <>
