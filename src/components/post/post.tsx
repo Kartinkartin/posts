@@ -19,7 +19,7 @@ import Comment from "../comment/comment";
 import { TStore } from "../../services/types";
 import { IComment } from "../../services/types/data";
 import styles from "./post.module.css";
-import { throwError } from "../../services/reducers/error";
+import { clearError, throwError } from "../../services/reducers/error";
 import ErrorInfo from "../error/error";
 
 interface IPostProps {
@@ -61,7 +61,12 @@ export default function Post({
           )
         );
     }
-    setShowComments(!showComments);
+    setShowComments((showComments) => {
+      if (error.text.length && showComments === true) {
+        dispatch(clearError());
+      }
+      return !showComments;
+    });
   };
   const addToFavHandler = (id: number) => {
     dispatch(addToFav(id));

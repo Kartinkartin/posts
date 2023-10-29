@@ -231,7 +231,6 @@ export default function Page() {
         {(users.length === 0 || posts.length === 0) && (
           <EmptyRender text="Не найдено!" />
         )}
-        {/* case of error or loading */}
         {Array.isArray(chosen) && Boolean(chosen.length) && (
           <div className={styles.handlers}>
             <Button
@@ -244,7 +243,7 @@ export default function Page() {
               text="Избранное"
               type="button"
               size="large"
-              onClick={openDeleteModal}
+              onClick={openAddModal}
             />
           </div>
         )}
@@ -254,7 +253,7 @@ export default function Page() {
           </Modal>
         )}
         {isAddOpen && Array.isArray(chosen) && (
-          <Modal onClose={openAddModal}>
+          <Modal onClose={closeAddModal}>
             <PopupAddFafourite id={chosen} closeModal={closeAddModal} />
           </Modal>
         )}
