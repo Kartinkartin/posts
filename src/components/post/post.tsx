@@ -19,6 +19,8 @@ import Comment from "../comment/comment";
 import { TStore } from "../../services/types";
 import { IComment } from "../../services/types/data";
 import styles from "./post.module.css";
+import { throwError } from "../../services/reducers/error";
+import ErrorInfo from "../error/error";
 
 interface IPostProps {
   title: string;
@@ -41,6 +43,7 @@ export default function Post({
   const [showComments, setShowComments] = useState(false);
   const comments = useSelector((store: TStore) => store.comments);
   const { favourites, chosen } = useSelector((store: TStore) => store.posts);
+  const error = useSelector((store: TStore) => store.error);
 
   const checkHandler = (id: number) => {
     dispatch(choseManyPosts(id));
@@ -48,10 +51,15 @@ export default function Post({
   const chatHandler = async (id: number) => {
     if (!Object.hasOwn(comments, id) || comments[id].length === 0) {
       await getCommentsPost(id)
-      .then((comments) =>
-        dispatch(getComments({ id, comments }))
-      )
-      .catch(() => console.log('error'));
+        .then((comments) => dispatch(getComments({ id, comments })))
+        .catch(() =>
+          dispatch(
+            throwError({
+              text: "Can't get comments. Server error",
+              type: "context",
+            })
+          )
+        );
     }
     setShowComments(!showComments);
   };
@@ -120,13 +128,16 @@ export default function Post({
           onClick={() => addToFavHandler(id)}
         />
       </div>
-      {showComments && (
+      {showComments && Array.isArray(comments[id]) && (
         <div className={styles.comments}>
           {comments[id].map((comment: IComment) => {
             const { name, email, body, id } = comment;
             return <Comment name={name} email={email} body={body} key={id} />;
           })}
         </div>
+      )}
+      {showComments && error.text.length !== 0 && error.type === "context" && (
+        <ErrorInfo error={error.text} type="context" />
       )}
     </div>
   );

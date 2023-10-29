@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useModal from "../../hooks/use-modal";
-import { useForm } from "../../hooks/use-form";
+import useForm from "../../hooks/use-form";
 import { getPosts, getUsers } from "../api/api";
 import { addPosts, chosePost } from "../../services/reducers/posts";
 import { addUsers } from "../../services/reducers/users";
+import { clearError } from "../../services/reducers/error";
+import { amountPosts } from "../../services/data";
+import { TStore } from "../../services/types";
+import { IPost, IUser } from "../../services/types/data";
 import FilterUser from "../filter-user/filter-user";
 import FilterStar from "../filter-star/filter-star";
 import Post from "../post/post";
@@ -12,19 +16,18 @@ import Button from "../../ui/buttons/button";
 import Modal from "../../ui/modal/modal";
 import PopupDelete from "../popup-delete/popup-delete";
 import PopupAddFafourite from "../popup-add-favourite/popup-add-favourite";
-import { TStore } from "../../services/types";
-import { IPost, IUser } from "../../services/types/data";
 import styles from "./page.module.css";
 import PopupMode from "../popup-mode/popup-mode";
 import Sorting from "../sorting/sorting";
-import { amountPosts } from "../../services/data";
 import Navigator from "../navigator/navigator";
 import FilterAmount from "../filter-amount/filter-amount";
 import EmptyRender from "../empty-posts/empty-posts";
+import ErrorInfo from "../error/error";
 
 export default function Page() {
   const dispatch = useDispatch();
   const users = useSelector((state: TStore) => state.users);
+  const error = useSelector((state: TStore) => state.error);
   const { posts, chosen, favourites } = useSelector(
     (state: TStore) => state.posts
   );
@@ -104,6 +107,10 @@ export default function Page() {
     }
     handler();
   };
+  const closeErrorModal = () => {
+    dispatch(clearError());
+  }
+
   function compareStrings(
     arr: Array<IPost | IUser>,
     key: string,
@@ -257,6 +264,11 @@ export default function Page() {
               id={typeof chosen === "number" ? chosen : null}
               onClose={() => onClose(closeModeModal)}
             />
+          </Modal>
+        )}
+        {error.text.length !== 0 && error.type === 'modal' && (
+          <Modal onClose={() => onClose(closeErrorModal)}>
+            <ErrorInfo error={error.text} />
           </Modal>
         )}
       </main>
