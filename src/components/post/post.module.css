@@ -1,0 +1,79 @@
+.container {
+  width: 100%;
+  border-radius: 16px;
+  box-shadow: 0px 2px 6px 2px rgba(0, 0, 0, 0.15),
+    0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+  background-color: #f7f2fa;
+  box-sizing: border-box;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 40px;
+  position: relative;
+}
+
+.favourite {
+  background-color: #E6E0E9;
+}
+
+.title {
+  font-family: "Roboto";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px; /* 150% */
+  letter-spacing: 0.15px;
+  margin: 0;
+}
+
+.author {
+  font-family: "Roboto";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px; /* 133.333% */
+  letter-spacing: 0.5px;
+  margin: 0;
+  text-align: right;
+}
+
+.text {
+  font-family: "Roboto";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+  letter-spacing: 0.25px;
+  margin: 0;
+  text-align: justify;
+}
+
+.handles {
+  display: flex;
+  column-gap: 10px;
+  justify-content: center;
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  right: 0;
+}
+
+.button {
+  width: 30px;
+  height: 30px;
+  background-position: center;
+  background-size: cover;
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.comments {
+  padding-top: 10px;
+}
+
+@media screen and (min-width: 1040px) {
+  .comments_open {
+    grid-row-end: span 3;
+  }
+}
