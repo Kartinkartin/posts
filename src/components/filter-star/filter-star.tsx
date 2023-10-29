@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import starEmptyIcon from "../../images/star_border.svg";
 import starFullIcon from "../../images/star.svg";
 import styles from "./filter-star.module.css";

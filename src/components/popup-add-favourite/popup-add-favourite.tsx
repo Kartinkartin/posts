@@ -1,7 +1,6 @@
 import { useDispatch } from "react-redux";
-import { addToFav, deletePost } from "../../services/reducers/posts";
+import { addToFav } from "../../services/reducers/posts";
 import Button from "../../ui/buttons/button";
-import { deletePostReq } from "../api/api";
 import styles from "./popup-add-favourite.module.css";
 
 interface IPopupProps {
