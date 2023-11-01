@@ -2,6 +2,8 @@
 
 Приложение выводит посты с возможностью взаимодейтвовать с ними.
 
+(Работа на GitHub Pages)[https://kartinkartin.github.io/posts/]
+
 ## Требования:
 
 * Использовать React.js, Redux-toolkit
