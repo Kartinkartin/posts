@@ -2,7 +2,7 @@
 
 Приложение выводит посты с возможностью взаимодейтвовать с ними.
 
-(Работа на GitHub Pages)[https://kartinkartin.github.io/posts/]
+[Работа на GitHub Pages](https://kartinkartin.github.io/posts/)
 
 ## Требования:
 
